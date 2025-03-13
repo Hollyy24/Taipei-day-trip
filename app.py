@@ -53,7 +53,6 @@ def get_spots_data(cnx):
     cursor = cnx.cursor()
     cursor.execute(sql)
     attractions = cursor.fetchall()
-    print(attractions)
     return	attractions
 
 
@@ -134,10 +133,33 @@ async def attraction(request: Request,page:int,keyword:str| None = None):
     cnx.close()
     try:
         if keyword != None:
-            with_keyword = [spot for spot in spot_format if keyword in spot["name"] ]
-            without_keyword = [spot for spot in spot_format if keyword not in spot["name"] ]
+            with_keyword_id = []
+            with_keyword = []
+            
+            for spot in spot_format:
+                print(spot["mrt"])
+                if spot["mrt"] is not None and keyword == spot["mrt"]:
+                    with_keyword.append(spot)
+                    with_keyword_id.append(spot["id"])
+                    
+            remove_already_find = []
+            for spot in spot_format:
+                if spot["id"] not in with_keyword_id:
+                    remove_already_find.append(spot)
+            
+            for spot in remove_already_find:
+                for letter in keyword:
+                    if letter in spot["name"]:
+                        with_keyword.append(spot)
+                        with_keyword_id.append(spot["id"])
+                        break
+            
+            remove_already_find = []
+            for spot in spot_format:
+                if spot["id"] not in with_keyword_id:
+                    remove_already_find.append(spot)
+            without_keyword = [spot for spot in spot_format if spot["id"] not in with_keyword_id ]
             filter_keyword = with_keyword + without_keyword
-            print(len(filter_keyword))
             full_data = final_data(filter_keyword)
         result = full_data[page]
         return JSONResponse(content=result,headers=headers)
