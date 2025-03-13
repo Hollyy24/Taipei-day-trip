@@ -46,171 +46,161 @@ async def thankyou(request: Request):
 
 
 
-def get_spots_data(cnx):
-    sql = """SELECT spot_id,name,category,description,address,transport,mrt,lat,lng,Images 
-        FROM spots 
-        ORDER BY spot_id"""
+
+
+def get_length(cnx,keyword):
     cursor = cnx.cursor()
+    if keyword :
+        sql= "SELECT COUNT(*) FROM spots WHERE mrt = %s OR name LIKE %s"
+        cursor.execute(sql,(keyword,f"%{keyword}%",))
+    else:
+        sql= "SELECT COUNT(*) FROM spots"
+        cursor.execute(sql)
+    length = cursor.fetchone()[0]
+    total_page = length // 12 
+    if length % 12 > 0 :
+        total_page += 1 
+    cursor.close()
+    return  (length,total_page)
+
+
+def get_data_by_page(cnx,page,keyword):
+    cursor = cnx.cursor(dictionary=True)
+    
+    length,total_page = get_length(cnx,keyword)    
+    start = page * 12
+    if start > length :
+        return (None,None)
+    elif start <= length:  
+        if keyword:
+            sql = """
+            SELECT id,name,category,description,address,transport,mrt,lat,lng,images FROM spots
+            WHERE mrt = %s OR name LIKE %s
+            ORDER BY id 
+            LIMIT 12 OFFSET %s """
+            cursor.execute(sql,(keyword,f"%{keyword}%",start,))
+        else:
+            sql = """
+            SELECT id,name,category,description,address,transport,mrt,lat,lng,images FROM spots
+            ORDER BY id
+            LIMIT 12 OFFSET %s"""
+            cursor.execute(sql,(start,))
+        data = cursor.fetchall()
+    print(start)
+    if start+12 < length:
+        print(start+12)
+        next_page = page+1
+    else:
+        next_page = None
+        
+    print(f"length:{length},page:{page},next_page:{next_page},total_page{total_page}")
+    cursor.close()            
+    return (next_page,data)
+
+
+def get_data_by_id(cnx,id):
+    cursor = cnx.cursor(dictionary=True)
+    
+    sql = """
+        SELECT id,name,category,description,address,transport,mrt,lat,lng,images FROM spots
+        WHERE id = %s 
+    """
+    cursor.execute(sql,(id,))
+    result = cursor.fetchone()
+    cursor.close()
+    print(result)
+    if result:
+        return result
+    else:
+        return None
+
+
+def get_all_mrts(cnx):
+    cursor = cnx.cursor()
+    
+    sql = """
+        SELECT mrt FROM(
+        SELECT mrt, COUNT(*) AS count FROM spots
+        GROUP BY mrt
+        )AS data
+        WHERE mrt IS NOT NULL
+        ORDER BY count DESC
+    """
+
     cursor.execute(sql)
-    attractions = cursor.fetchall()
-    return	attractions
-
-
-def images_to_array(string):
-    images_array = []
-    if string :
-        temp_array =  string.split("http")[1:]
-        for url in temp_array:
-            url = ("http"+ url)
-            images_array.append(url)
-    return images_array
-
-
-def transform_to_dataformat(attractions_data):
-    attractions_list = []
-    for attraction in attractions_data:
-        temp = {
-        "id" : attraction[0],
-		"name": attraction[1],
-		"category": attraction[2],
-		"description": attraction[3],
-		"address": attraction[4],
-		"transport": attraction[5],
-		"mrt": attraction[6],
-		"lat": attraction[7],
-		"lng": attraction[8],
-        "images": images_to_array(attraction[9])
-		}
-        attractions_list.append(temp)
-    return attractions_list
-
-
-def final_data(attractions_data):
-    count = 1
-    pages = math.ceil(len(attractions_data)/12)
-    now_page = 0
-    spots_data = {}
-    spots_data[now_page] = { "nextPage": now_page+1 , "data":[] }
-    for index,attraction in enumerate(attractions_data,start=1):
-        if index %12 ==1 and index != 1:
-            now_page += 1
-            spots_data[now_page] = {"nextPage": now_page + 1 if now_page + 1 <= pages else None, "data": []}
-        spots_data[now_page]["data"].append(attraction)
-    return spots_data
+    mrts = cursor.fetchall()
+    cursor.close()
+    
+    return mrts
 
 
 
 headers = {"Content-Type": "application/json; charset=utf-8"}
-
-@app.exception_handler(HTTPException)
-async def different_http_exception_handler(request, exc: HTTPException):
-    if exc.status_code == 400:
-        return JSONResponse(
-            status_code= exc.status_code,
-            content={
-                "error": True,
-                "message": exc.detail
-            },
-            headers = headers
-        )
-    elif exc.status_code == 500:
-        return JSONResponse(
-            status_code= exc.status_code,
-            content={
-                "error": True,
-                "message": exc.detail
-            },
-            headers = headers
-        )
-
-
 @app.get("/api/attractions")
-async def attraction(request: Request,page:int,keyword:str| None = None):
+async def attractions(request: Request,page:int,keyword:str| None = None):
     cnx = cnxpool.get_connection()
-    spots_data = get_spots_data(cnx)
-    spot_format = transform_to_dataformat(spots_data)
-    full_data = final_data(spot_format)
-    cnx.close()
     try:
-        if keyword != None:
-            with_keyword_id = []
-            with_keyword = []
-            
-            for spot in spot_format:
-                print(spot["mrt"])
-                if spot["mrt"] is not None and keyword == spot["mrt"]:
-                    with_keyword.append(spot)
-                    with_keyword_id.append(spot["id"])
-                    
-            remove_already_find = []
-            for spot in spot_format:
-                if spot["id"] not in with_keyword_id:
-                    remove_already_find.append(spot)
-            
-            for spot in remove_already_find:
-                for letter in keyword:
-                    if letter in spot["name"]:
-                        with_keyword.append(spot)
-                        with_keyword_id.append(spot["id"])
-                        break
-            
-            remove_already_find = []
-            for spot in spot_format:
-                if spot["id"] not in with_keyword_id:
-                    remove_already_find.append(spot)
-            without_keyword = [spot for spot in spot_format if spot["id"] not in with_keyword_id ]
-            filter_keyword = with_keyword + without_keyword
-            full_data = final_data(filter_keyword)
-        result = full_data[page]
+        next_page, data = get_data_by_page(cnx,page,keyword)
+        result = {
+            "next_page":next_page,
+            "data": data
+            }
         return JSONResponse(content=result,headers=headers)
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
+    except :
+        return JSONResponse(
+                status_code=500,
+                content={"error": True,"message": "伺服器內部錯誤"},
+                headers = headers
+                )
+    finally:
+        cnx.close()
 
 
 @app.get("/api/attraction/{attraction_ID}")
 async def attraction(request: Request,attraction_ID: int):
     cnx = cnxpool.get_connection()
-    spots_data = get_spots_data(cnx)
-    spot_format = transform_to_dataformat(spots_data)
-    cnx.close()
     try:
-        for item  in spot_format:
-            print(item)
-            print(type(item["id"]))
-            if item["id"] == attraction_ID:
-                return JSONResponse(content=item,headers=headers)
-        raise HTTPException(status_code=400, detail="景點編號不正確")
-    except HTTPException as e:
-        raise e
-    except  Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
-
+        data = get_data_by_id(cnx,attraction_ID)
+        if data is None:
+            return JSONResponse(status_code=400,
+                    content={
+                        "error": True,
+                        "message": "景點編號不正確"
+                    },
+                    headers = headers
+                )
+        result = {
+            "data":data
+            }
+        return JSONResponse(content=result,headers=headers)
+    except:
+        return JSONResponse(
+                    status_code=500,
+                    content={"error": True,"message": "伺服器內部錯誤"},
+                    headers = headers
+                )
+    finally:
+        cnx.close()
 
 
 @app.get("/api/mrts")
-async def attraction(request: Request):
+async def get_mrts(request: Request):
+    cnx = cnxpool.get_connection()
     try:
-        cnx = cnxpool.get_connection()
-        sql  = "SELECT name,mrt from spots"
-        cursor = cnx.cursor()
-        cursor.execute(sql)
-        raw_mrts = cursor.fetchall() 
+        mrts = get_all_mrts(cnx)
+        data = [mrt[0] for mrt in mrts]
+        return JSONResponse(
+            content={"data":data},
+            headers= headers
+        )
+    except :
+        return JSONResponse(
+                status_code=500,
+                content={"error": True,"message": "伺服器內部錯誤"},
+                headers = headers
+                )
+    finally:
         cnx.close()
-        mrts = {}
-        for mrt in raw_mrts:
-            if mrt[1] not in mrts:
-                mrts[mrt[1]] = 1
-            else:
-                mrts[mrt[1]] += 1
-        temp = [(key,item) for key,item in mrts.items()]
-        sort_data = sorted(temp, key=lambda x:x[1], reverse=True)
-        result = [mrt[0] for mrt in sort_data if mrt[0] is not None ]
-        return JSONResponse(content={"data":result},headers=headers)
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="伺服器內部錯誤")
-    
+        
 if __name__ == "__main__":
 	uvicorn.run(app,host="0.0.0.0",port=8000)

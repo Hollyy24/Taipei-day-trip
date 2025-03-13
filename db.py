@@ -13,11 +13,13 @@ mydb = mysql.connector.connect(
     user = os.getenv("DATA_USER"),
     password = os.getenv("MY_PASSWORD"),
     database= "travelSpots",
-)   
+)  
+
+
 
 
 def insert_spot_data(mydb,spot_list):
-    sql ="""INSERT INTO spots(spot_id,name,category,description,address,transport,mrt,lat,lng,images) 
+    sql ="""INSERT INTO spots(id,name,category,description,address,transport,mrt,lat,lng,images) 
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         """
     for spot in spot_list:
