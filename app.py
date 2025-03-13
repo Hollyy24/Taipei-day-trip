@@ -101,6 +101,7 @@ def final_data(attractions_data):
 
 
 
+headers = {"Content-Type": "application/json; charset=utf-8"}
 
 @app.exception_handler(HTTPException)
 async def different_http_exception_handler(request, exc: HTTPException):
@@ -110,7 +111,8 @@ async def different_http_exception_handler(request, exc: HTTPException):
             content={
                 "error": True,
                 "message": exc.detail
-            }
+            },
+            headers = headers
         )
     elif exc.status_code == 500:
         return JSONResponse(
@@ -118,7 +120,8 @@ async def different_http_exception_handler(request, exc: HTTPException):
             content={
                 "error": True,
                 "message": exc.detail
-            }
+            },
+            headers = headers
         )
 
 
@@ -137,7 +140,7 @@ async def attraction(request: Request,page:int,keyword:str| None = None):
             print(len(filter_keyword))
             full_data = final_data(filter_keyword)
         result = full_data[page]
-        return result 
+        return JSONResponse(content=result,headers=headers)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="伺服器內部錯誤")
@@ -154,7 +157,7 @@ async def attraction(request: Request,attraction_ID: int):
             print(item)
             print(type(item["id"]))
             if item["id"] == attraction_ID:
-                return item
+                return JSONResponse(content=item,headers=headers)
         raise HTTPException(status_code=400, detail="景點編號不正確")
     except HTTPException as e:
         raise e
@@ -181,9 +184,8 @@ async def attraction(request: Request):
                 mrts[mrt[1]] += 1
         temp = [(key,item) for key,item in mrts.items()]
         sort_data = sorted(temp, key=lambda x:x[1], reverse=True)
-        print(sort_data)
         result = [mrt[0] for mrt in sort_data if mrt[0] is not None ]
-        return {"data":result}
+        return JSONResponse(content={"data":result},headers=headers)
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="伺服器內部錯誤")
