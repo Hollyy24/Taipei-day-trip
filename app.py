@@ -86,14 +86,11 @@ def get_data_by_page(cnx,page,keyword):
             LIMIT 12 OFFSET %s"""
             cursor.execute(sql,(start,))
         data = cursor.fetchall()
-    print(start)
     if start+12 < length:
-        print(start+12)
         next_page = page+1
     else:
         next_page = None
         
-    print(f"length:{length},page:{page},next_page:{next_page},total_page{total_page}")
     cursor.close()            
     return (next_page,data)
 
@@ -108,7 +105,6 @@ def get_data_by_id(cnx,id):
     cursor.execute(sql,(id,))
     result = cursor.fetchone()
     cursor.close()
-    print(result)
     if result:
         return result
     else:
@@ -142,7 +138,7 @@ async def attractions(request: Request,page:int,keyword:str| None = None):
     try:
         next_page, data = get_data_by_page(cnx,page,keyword)
         result = {
-            "next_page":next_page,
+            "nextPage":next_page,
             "data": data
             }
         return JSONResponse(content=result,headers=headers)
