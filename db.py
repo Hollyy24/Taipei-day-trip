@@ -36,7 +36,8 @@ def filter_imges(images_string):
         full_URL =  "http" + URL.strip()
         if full_URL.lower().endswith((".jpg",".png")):
             images_URL.append(full_URL)
-    URL_string = "".join(images_URL)
+    URL_string = json.dumps(images_URL)
+    print(URL_string)
     return URL_string
 
 
