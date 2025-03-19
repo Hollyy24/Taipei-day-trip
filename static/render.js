@@ -108,17 +108,25 @@ function renderAttraction(dict, node) {
 }
 
 function scrollPage(pageNumber) {
+    if (isLoading) return;
+    isLoading = true;
     const attractionList = document.querySelector("#attractions-list");
     const attractRect = attractionList.getBoundingClientRect();
     const buffer = 100;
     if (attractRect.bottom <= window.innerHeight + window.scrollY + buffer) {
         if (searchWay == "withoutKeyword") {
             console.log("page=" + pageNumber)
-            loadsAttractionsWithoutKeyword(pageNumber);
+            loadsAttractionsWithoutKeyword(pageNumber).then(() => {
+                isLoading = false;
+            });
         } else if (searchWay == "keyword") {
             console.log("page=" + pageNumber)
-            loadsAttractionsByKeyword(page, keyword);
+            loadsAttractionsByKeyword(page, keyword).then(() => {
+                isLoading = false;
+            });
         }
+    } else {
+        isLoading = false;
     }
 }
 
@@ -127,6 +135,7 @@ function scrollPage(pageNumber) {
 let page;
 let keyword;
 let searchWay = "withoutKeyword";
+let isLoading = false;
 const searchForm = document.querySelector("#search-bar");
 const searchKeyword = document.querySelector("#search-bar-input");
 const leftArrow = document.querySelector("#arrow-left");
@@ -136,12 +145,12 @@ const mrtsList = document.querySelector("#mrts-list");
 
 
 loasdMrts();
-loadsAttractionsWithoutKeyword(0, keyword);
+loadsAttractionsWithoutKeyword(0);
 
 // reander attractions section
 
 window.addEventListener("scroll", function () {
-    if (page) {
+    if (page && !isLoading) {
         scrollPage(page)
     }
 });
