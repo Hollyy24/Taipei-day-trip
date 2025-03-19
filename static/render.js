@@ -37,6 +37,30 @@ async function loadsAttractionsByKeyword(pageNumber, keywordString) {
     }
 }
 
+async function loadsAttractionsByMrt(pageNumber, keywordString) {
+    try {
+        let response = await fetch(`api/attractions?page=${pageNumber}&keyword=${keywordString}`);
+        let data = await response.json();
+        let attractions = data["data"];
+        let attractionList = document.querySelector("#attractions-list")
+        console.log(attractions);
+        if (attractions.length !== 0) {
+            page = data["nextPage"];
+            for (let attraction of attractions) {
+                if (attraction["mrt"] === keywordString) {
+                    renderAttraction(attraction, attractionList);
+                }
+            }
+        } else {
+            alert("查無相關資料。")
+        }
+
+    }
+    catch (error) {
+        console.error("Error", error);
+    }
+}
+
 async function loasdMrts() {
     try {
         let response = await fetch(`api/mrts`);
@@ -124,6 +148,11 @@ function scrollPage(pageNumber) {
             loadsAttractionsByKeyword(page, keyword).then(() => {
                 isLoading = false;
             });
+        } else if (searchWay == "mrt") {
+            console.log("page=" + pageNumber)
+            loadsAttractionsByMrt(page, keyword).then(() => {
+                isLoading = false;
+            });
         }
     } else {
         isLoading = false;
@@ -174,11 +203,11 @@ mrtsList.addEventListener("click", function (event) {
     if (event.target.classList.contains("mrt-name")) {
         keyword = event.target.textContent;
         page = 0;
-        searchWay = "keyword";
+        searchWay = "mrt";
         console.log("mrts")
         console.log(keyword, page);
         clearAttraction();
-        loadsAttractionsByKeyword(page, keyword);
+        loadsAttractionsByMrt(page, keyword);
     }
 })
 
