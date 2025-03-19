@@ -1,11 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Index</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Noto+Sans+TC:wght@100..900&display=swap"
+    rel="stylesheet">
 </head>
+
 <body>
-  
+  <div id="dialog-bg">
+  </div>
+  <nav id="nav-bar">
+    <h1 id="nav-left">台北一日遊</h1>
+    <ul id="nav-right">
+      <li class="nav-link" id="nav-booking">預定行程</li>
+      <li><a class="nav-link" id="nav-signin">登入</a>/<a class="nav-link" id="nav-signup">註冊</a></li>
+    </ul>
+  </nav>
+
+  </div>
+  <div id="hero-section">
+    <div id="dialog-bg"></div>
+    <div id="dialog-signin">
+      <h3 class="dialog-headline">登入會員帳號</h3>
+      <button class="close-button" id="close-signin"><img src="/static/images/close.png"></button>
+      <form id="signin-form">
+        <input placeholder="輸入電子信箱">
+        <input placeholder="輸入密碼">
+        <button>登入帳號</button>
+      </form>
+      <p class="dialog-comment">還沒有帳號？點此<a href="#" onclick="showSignup()">註冊</a></p>
+    </div>
+    <div id="dialog-signup">
+      <h3 class="dialog-headline">註冊會員帳號</h3>
+      <button class="close-button" id="close-signup"><img src="/static/images/close.png"></button>
+      <form id="signup-form">
+        <input id="signup-form-name" placeholder="輸入姓名">
+        <input id="signup-form-email" placeholder="輸入電子信箱">
+        <input id="signup-form-password" placeholder="輸入密碼">
+        <button id="signup-form-submit">註冊新帳號</button>
+      </form>
+      <p class="dialog-comment">還沒有帳號？點此<a href="#" onclick="showSignin()">登入</a></p>
+    </div>
+    <div id="slogan">
+      <h1>輕鬆享受台北一日悠閒</h1>
+      <p id="heading-line">探索每個角落，體驗城市的深度旅遊行程</p>
+      <form id="search-bar">
+        <input id="search-bar-input" placeholder="  輸入景點名稱查詢">
+        <button id="search-bar-submot"><img src="/static/images/search.png"></button>
+      </form>
+    </div>
+  </div>
+  <main id="second-section">
+
+    <nav id="list-bar">
+      <button id="arrow-left"><img src="static/images/leftArrowDefault.png"></button>
+      <div id="mrts-form">
+        <ul id="mrts-list">
+        </ul>
+      </div>
+      <button id="arrow-right"><img src="static/images/rightArrowDefault.png"></button>
+    </nav>
+    <div id="attractions-list">
+
+    </div>
+
+    </div>
+
+  </main>
+  <footer>
+    COPYRIGHT © 2021台北一日遊
+  </footer>
 </body>
+<script src="/static/renderAttraction.js"></script>
+
 </html>

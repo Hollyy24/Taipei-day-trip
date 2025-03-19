@@ -1,5 +1,6 @@
 from fastapi import *
 from fastapi.responses import FileResponse,JSONResponse
+from fastapi.staticfiles import StaticFiles
 from  dotenv import load_dotenv
 from mysql.connector import pooling
 import mysql.connector
@@ -14,6 +15,7 @@ class UnicornException(Exception):
 
 
 app=FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 dbconfig = {
@@ -26,7 +28,6 @@ dbconfig = {
 cnxpool = mysql.connector.pooling.MySQLConnectionPool(pool_name="mypool",
                                                 pool_size = 5,
                                                 **dbconfig)
-
 
 
 # Static Pages (Never Modify Code in this Block)
