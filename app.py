@@ -1,10 +1,11 @@
 from fastapi import *
 from fastapi.responses import FileResponse,JSONResponse
+from fastapi.staticfiles import StaticFiles
 from  dotenv import load_dotenv
 from mysql.connector import pooling
 import mysql.connector
 import os
-import math
+import json
 import uvicorn
 
 class UnicornException(Exception):
@@ -14,6 +15,7 @@ class UnicornException(Exception):
 
 
 app=FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 dbconfig = {
@@ -26,7 +28,6 @@ dbconfig = {
 cnxpool = mysql.connector.pooling.MySQLConnectionPool(pool_name="mypool",
                                                 pool_size = 5,
                                                 **dbconfig)
-
 
 
 # Static Pages (Never Modify Code in this Block)
@@ -137,6 +138,8 @@ async def attractions(request: Request,page:int,keyword:str| None = None):
     cnx = cnxpool.get_connection()
     try:
         next_page, data = get_data_by_page(cnx,page,keyword)
+        for spot in data:
+            spot["images"] = json.loads(spot["images"])
         result = {
             "nextPage":next_page,
             "data": data
@@ -165,6 +168,7 @@ async def attraction(request: Request,attraction_ID: int):
                     },
                     headers = headers
                 )
+        data["images"] = json.loads(data["images"])
         result = {
             "data":data
             }
