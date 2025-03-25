@@ -15,9 +15,6 @@
 
 <body>
   <div id="dialog-bg"></div>
-
-  <div id="dialog-bg">
-  </div>
   <nav id="nav-bar">
     <h1 id="nav-left">台北一日遊</h1>
     <ul id="nav-right">
@@ -25,7 +22,7 @@
       <li><a class="nav-link" id="nav-signin">登入</a>/<a class="nav-link" id="nav-signup">註冊</a></li>
     </ul>
   </nav>
-  </div>
+  <hr id="seperator">
   <main>
     <div id="dialog-signin">
       <h3 class="dialog-headline">登入會員帳號</h3>
@@ -78,13 +75,17 @@
     </section>
     <hr>
     <section class="introduce-container">
-      <p id="attraction-detail"></p>
-
-      <strong>景點地址：</strong>
-      <p id="attraction-address"></p>
-      <strong>交通方式：</strong>
-      <p id="attraction-transport"></p>
-
+      <div class="item-container">
+        <p id="attraction-detail"></p>
+      </div>
+      <div class="item-container">
+        <p><strong>景點地址：</strong></p>
+        <p id="attraction-address"></p>
+      </div>
+      <div class="item-container">
+        <p><strong>交通方式：</strong></p>
+        <p id="attraction-transport"></p>
+      </div>
     </section>
 
   </main>
