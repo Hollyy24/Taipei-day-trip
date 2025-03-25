@@ -80,6 +80,7 @@ async function loasdMrts() {
     }
 }
 
+
 function clearAttraction() {
     console.log("clear attractions")
     let attractionList = document.querySelector("#attractions-list");
@@ -116,12 +117,15 @@ function renderAttraction(dict, node) {
 
     let attractionNode = document.createElement("div");
     attractionNode.className = "attraction";
+    attractionNode.id = dict["id"];
+
 
     category.appendChild(attractionMrt);
     category.appendChild(attractionCategory);
 
     attractionForName.append(attractionName)
     attractionImage.append(attractionForName);
+
 
     attractionNode.appendChild(attractionImage);
     attractionNode.appendChild(category);
@@ -171,10 +175,17 @@ const leftArrow = document.querySelector("#arrow-left");
 const rightArrow = document.querySelector("#arrow-right");
 const mrtsForm = document.querySelector("#mrts-form");
 const mrtsList = document.querySelector("#mrts-list");
+const homePage = document.querySelector("#nav-left");
+
 
 
 loasdMrts();
 loadsAttractionsWithoutKeyword(0);
+
+homePage.addEventListener("click", function () {
+    window.location.href = "/";
+})
+
 
 // reander attractions section
 
@@ -280,6 +291,16 @@ leftArrow.addEventListener("click", function (event) {
     }
 });
 
+// trans Attraction/id
+let attractionId;
+const attractionList = document.querySelector("#attractions-list");
+console.log(attractionList)
+attractionList.addEventListener("click", function (event) {
+    attractionId = event.target.closest(".attraction").id;
+    window.location.href = `attraction/${attractionId}`;
+}
+);
+
 // signin & signup
 const navSignin = document.querySelector("#nav-signin");
 const navSignup = document.querySelector("#nav-signup");
@@ -336,3 +357,5 @@ signinForm.addEventListener("submit", function (event) {
 signupForm.addEventListener("submit", function (event) {
     event.preventDefault()
 });
+
+
