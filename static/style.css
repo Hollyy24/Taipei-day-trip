@@ -619,7 +619,8 @@
     .introduce-container {
         color: #666666;
         display: block;
-        padding-bottom: 30px;
+        margin-bottom: 100px;
+
     }
 
 }
@@ -1246,7 +1247,8 @@
     .introduce-container {
         color: #666666;
         display: block;
-        padding-bottom: 30px;
+        margin-bottom: 100px;
+
     }
 }
 
@@ -1870,8 +1872,10 @@
 
     .introduce-container {
         color: #666666;
+        color: #666666;
         display: block;
-        padding-bottom: 30px;
+        margin-bottom: 100px;
+
     }
 }
 
@@ -2500,11 +2504,13 @@
 
 
 
+
+
     .introduce-container {
         color: #666666;
-        width: 90%;
+        color: #666666;
         display: block;
-        padding-bottom: 30px;
+        margin-bottom: 100px;
         font-size: 14px;
     }
 }
