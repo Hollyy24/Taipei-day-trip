@@ -222,14 +222,13 @@ class SigninForm(BaseModel):
 
 
 def signJWT(user):
-    print(type(user["name"]))
-    print(type(user["email"]))
     payload = {
         "id" : user["id"],
         "name" : user["name"],
         "email":user["email"],
-        "exp" : datetime.now(tz=timezone.utc) + timedelta(hours=24*7)
+        "exp" : (datetime.now(tz=timezone.utc) + timedelta(hours=24*7)).timestamp()
     }
+    print(payload)
     token = jwt.encode(payload,JWT_SECRET,"HS256")
     return token
 
