@@ -194,8 +194,6 @@ signinForm.addEventListener("submit", function (event) {
         "email": email,
         "password": password
     }
-    console.log(email)
-    console.log(password)
     fetch("/api/user/auth", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -212,7 +210,7 @@ signinForm.addEventListener("submit", function (event) {
                     node.style.color = "red";
                     signinForm.appendChild(node);
                 }
-            } else if (response["ok"] == true) {
+            } else {
                 const token = response["token"];
                 localStorage.setItem("TOKEN", token);
                 alert("登入成功！")
