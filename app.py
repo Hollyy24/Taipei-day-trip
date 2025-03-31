@@ -11,7 +11,7 @@ import uvicorn
 import jwt
 from datetime import datetime, timedelta, timezone
 
-
+load_dotenv()
 
 class UnicornException(Exception):
     def __init__(self, name:str):
@@ -229,7 +229,9 @@ def signJWT(user):
         "exp" : (datetime.now(tz=timezone.utc) + timedelta(hours=24*7)).timestamp()
     }
     print(payload)
+    print(JWT_SECRET)
     token = jwt.encode(payload,JWT_SECRET,"HS256")
+    print(token)
     return token
 
 
