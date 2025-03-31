@@ -364,8 +364,6 @@ signinForm.addEventListener("submit", function (event) {
         "email": email,
         "password": password
     }
-    console.log(email)
-    console.log(password)
     fetch("/api/user/auth", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -444,7 +442,6 @@ async function checkJwt() {
     console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
     if (token) {
-        console.log("have token")
         fetch("/api/user/auth", {
             method: "GET",
             headers: {
@@ -454,7 +451,6 @@ async function checkJwt() {
             .then((response) => response.json())
             .then((data) => {
                 if (data["data"]) {
-                    console.log(data);
                     const signup = document.querySelector("#nav-signup");
                     const signin = document.querySelector("#nav-signin");
                     const signout = document.querySelector("#nav-signout");

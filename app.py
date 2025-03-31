@@ -3,14 +3,12 @@ from fastapi.responses import FileResponse,JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from  dotenv import load_dotenv
-from typing import  Union
 from mysql.connector import pooling
 import mysql.connector
 import os
 import json
 import uvicorn
 import jwt
-import hashlib
 from datetime import datetime, timedelta, timezone
 
 
