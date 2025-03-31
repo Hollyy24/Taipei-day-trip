@@ -52,6 +52,7 @@ const homePage = document.querySelector("#nav-left");
 
 
 
+checkJwt()
 getAttrctionData(id)
 
 
@@ -110,7 +111,7 @@ function showImage(imageIndex) {
         }
     });
 
-    dots.forEach((dot, i) => {
+    dots.forEach((dot) => {
         if (dot.id == `dot-${index}`) {
             dot.className = "blackdot"
         } else {
@@ -182,12 +183,123 @@ closeSignup.addEventListener("click", function () {
     closeDialog()
 });
 
+
+
+
 signinForm.addEventListener("submit", function (event) {
     event.preventDefault()
-});
+    const email = document.querySelector("#signin-form-email").value;
+    const password = document.querySelector("#signin-form-password").value;
+    const data = {
+        "email": email,
+        "password": password
+    }
+    console.log(email)
+    console.log(password)
+    fetch("/api/user/auth", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .then(function (response) {
+            if (response["error"] == true) {
+                const message = document.querySelector("#error-message")
+                if (!message) {
+                    const node = document.createElement("p");
+                    node.textContent = response["message"];
+                    node.id = "error-message";
+                    node.style.color = "red";
+                    signinForm.appendChild(node);
+                }
+            } else {
+                const token = response["token"];
+                localStorage.setItem("TOKEN", token);
+                alert("登入成功！")
+                location.reload();
+                checkJwt();
+            }
+        })
+        .catch((error) => console.error("Error:", error))
+
+
+})
 
 signupForm.addEventListener("submit", function (event) {
     event.preventDefault()
-});
+    const name = document.querySelector("#signup-form-name").value;
+    const email = document.querySelector("#signup-form-email").value;
+    const password = document.querySelector("#signup-form-password").value;
+    const data = {
+        "name": name,
+        "email": email,
+        "password": password
+    }
+    fetch("/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    })
+        .then((res) => res.json())
+        .then(function (response) {
+            if (response["error"] == true) {
+                const message = document.querySelector("#error-message")
+                if (!message) {
+                    const node = document.createElement("p");
+                    node.textContent = response["message"];
+                    node.id = "error-message";
+                    node.style.color = "red";
+                    signupForm.appendChild(node);
+                }
+            } else {
+                const message = document.querySelector("#error-message")
+                if (!message) {
+                    const node = document.createElement("p");
+                    node.textContent = "註冊成功，請登入";
+                    node.id = "error-message";
+                    node.style.color = "red";
+                    signupForm.appendChild(node);
+                }
+                else {
+                    message.textContent = "註冊成功，請登入";
+                }
+            }
+        })
+        .catch((error) => console.error("Error:", error))
+
+})
 
 
+
+async function checkJwt() {
+    console.log("check JWT");
+    const token = localStorage.getItem("TOKEN");
+    if (token) {
+        console.log("have token")
+        fetch("/api/user/auth", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data["data"]) {
+                    console.log(data);
+                    const signup = document.querySelector("#nav-signup");
+                    const signin = document.querySelector("#nav-signin");
+                    const signout = document.querySelector("#nav-signout");
+                    signin.style.display = "none";
+                    signup.style.display = "none";
+                    signout.style.display = "flex";
+                }
+            })
+            .catch((error) => console.log(error));
+    }
+}
+
+function signout() {
+    localStorage.removeItem("TOKEN");
+    location.reload()
+
+}

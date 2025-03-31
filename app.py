@@ -1,21 +1,29 @@
 from fastapi import *
 from fastapi.responses import FileResponse,JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 from  dotenv import load_dotenv
+from typing import  Union
 from mysql.connector import pooling
 import mysql.connector
 import os
 import json
 import uvicorn
+import jwt
+import hashlib
+from datetime import datetime, timedelta, timezone
+
+
 
 class UnicornException(Exception):
     def __init__(self, name:str):
         self.name = name
 
 
-
 app=FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
 
 
 dbconfig = {
@@ -43,8 +51,6 @@ async def booking(request: Request):
 @app.get("/thankyou", include_in_schema=False)
 async def thankyou(request: Request):
 	return FileResponse("./static/thankyou.html", media_type="text/html")
-
-
 
 
 
@@ -193,6 +199,7 @@ async def get_mrts(request: Request):
             content={"data":data},
             headers= headers
         )
+        return JSONResponse()
     except :
         return JSONResponse(
                 status_code=500,
@@ -201,6 +208,103 @@ async def get_mrts(request: Request):
                 )
     finally:
         cnx.close()
+    
+JWT_SECRET = os.getenv("MY_SECRET_KEY")
+
+
+class User(BaseModel):
+    name: str
+    email: str
+    password: str
+
+class SigninForm(BaseModel):
+    email: str
+    password: str
+
+
+
+def signJWT(user):
+    print(type(user["name"]))
+    print(type(user["email"]))
+    payload = {
+        "id" : user["id"],
+        "name" : user["name"],
+        "email":user["email"],
+        "exp" : datetime.now(tz=timezone.utc) + timedelta(hours=24*7)
+    }
+    token = jwt.encode(payload,JWT_SECRET,"HS256")
+    return token
+
+
+
+
+
+@app.post("/api/user")
+async def sign_up(user:User):
+    cnx = cnxpool.get_connection()
+    cursor = cnx.cursor()
+    try:
+        sql = "INSERT INTO members(name, email, password)  VALUES (%s,%s,%s)"
+        cursor.execute(sql,(user.name,user.email,user.password,))
+        cnx.commit()
+        result =  cursor.rowcount
+        if result > 0  :
+            return JSONResponse(content={"ok":True})
+
+    except mysql.connector.IntegrityError:
+        return JSONResponse(
+            status_code=400,
+            content={"error": True,
+            "message": "註冊失敗，Email 已被使用"})
+
+    except Exception as e:
+        print(e)
+        return JSONResponse(
+            status_code=500,
+            content={"error":True,"message":"伺服器內部錯誤"})
+    finally:
+        cnx.close()
+
+
+@app.get("/api/user/auth")
+async def get_user(authorization: str = Header(None)):
+    token = authorization.split("Bearer ")[1]
+    data = jwt.decode(token,JWT_SECRET,algorithms="HS256")
+    exp = data.get("exp")
+    now = datetime.now(timezone.utc).timestamp()
+    if exp and exp < now:
+        return JSONResponse(content={"data":"null"})
+    elif exp and exp > now:
+        result ={
+            "id":data["id"],
+            "name" : data["name"],
+            "email" : data["email"]
+        }
+        print(result)
+        return JSONResponse(status_code=200,content={"data":result})
+        
+
+@app.put("/api/user/auth")
+async def sign_in(user:SigninForm):
+    print("sign-in")
+    cnx = cnxpool.get_connection()
+    cursor = cnx.cursor(dictionary=True)
+    try:
+        sql = "SELECT * FROM members WHERE email=%s AND password = %s"
+        cursor.execute(sql,(user.email,user.password,))
+        result = cursor.fetchone()
+        if result:
+            token = signJWT(result)
+            return JSONResponse(status_code=200,content={"token":token})
+        else:
+            return JSONResponse(status_code=400,content={"error":True,"message":"登入失敗，帳號或密碼錯誤或其他原因"})
+    except Exception as e:
+        print(e)
+        return JSONResponse(status_code=500,content={"error":True,"message":"伺服器內部錯誤"})
+    finally:
+        cnx.close()
+
+
         
 if __name__ == "__main__":
 	uvicorn.run(app,host="0.0.0.0",port=8000)
