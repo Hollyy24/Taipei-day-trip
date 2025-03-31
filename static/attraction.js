@@ -212,7 +212,7 @@ signinForm.addEventListener("submit", function (event) {
                     node.style.color = "red";
                     signinForm.appendChild(node);
                 }
-            } else {
+            } else if (response["ok"] == true) {
                 const token = response["token"];
                 localStorage.setItem("TOKEN", token);
                 alert("登入成功！")

@@ -372,6 +372,7 @@ signinForm.addEventListener("submit", function (event) {
         .then((res) => res.json())
         .then(function (response) {
             if (response["error"] == true) {
+                console.log(response)
                 const message = document.querySelector("#error-message")
                 if (!message) {
                     const node = document.createElement("p");
@@ -419,7 +420,7 @@ signupForm.addEventListener("submit", function (event) {
                     node.style.color = "red";
                     signupForm.appendChild(node);
                 }
-            } else {
+            } else if (response["ok"] == true) {
                 const message = document.querySelector("#error-message")
                 if (!message) {
                     const node = document.createElement("p");
