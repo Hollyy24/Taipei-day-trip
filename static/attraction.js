@@ -142,23 +142,37 @@ const navBg = document.querySelector("#dialog-bg");
 const dialogSignin = document.querySelector("#dialog-signin");
 const closeSignin = document.querySelector("#close-signin");
 const signinForm = document.querySelector("#signin-form");
+const signinEmail = document.querySelector("#signin-form-email");
+const signinPassword = document.querySelector("#signin-form-password");
+const signinMessage = document.querySelector("#signin-message");
 
 const dialogSignup = document.querySelector("#dialog-signup");
 const closeSignup = document.querySelector("#close-signup");
 const signupForm = document.querySelector("#signup-form");
+const signupname = document.querySelector("#signup-form-name");
+const signupEmail = document.querySelector("#signup-form-email");
+const signupPassword = document.querySelector("#signup-form-password");
+const signupMessage = document.querySelector("#signup-message");
+
 
 
 function showSignin() {
     navBg.style.display = "flex";
     dialogSignup.style.display = "none";
     dialogSignin.style.display = "flex";
+    signinMessage.textContent = "";
+    signinEmail.value = "";
+    signinPassword.value = "";
 }
 
 function showSignup() {
     navBg.style.display = "flex";
     dialogSignin.style.display = "none";
     dialogSignup.style.display = "flex";
-
+    signupMessage.textContent = "";
+    signupname.value = "";
+    signupEmail.value = "";
+    signupPassword.value = "";
 }
 
 function closeDialog() {
@@ -186,13 +200,16 @@ closeSignup.addEventListener("click", function () {
 
 
 
+
+
 signinForm.addEventListener("submit", function (event) {
     event.preventDefault()
-    const email = document.querySelector("#signin-form-email").value;
-    const password = document.querySelector("#signin-form-password").value;
+    const email = document.querySelector("#signin-form-email");
+    const password = document.querySelector("#signin-form-password");
+    const message = document.querySelector("#signin-message")
     const data = {
-        "email": email,
-        "password": password
+        "email": email.value,
+        "password": password.value
     }
     fetch("/api/user/auth", {
         method: "PUT",
@@ -202,14 +219,9 @@ signinForm.addEventListener("submit", function (event) {
         .then((res) => res.json())
         .then(function (response) {
             if (response["error"] == true) {
-                const message = document.querySelector("#error-message")
-                if (!message) {
-                    const node = document.createElement("p");
-                    node.textContent = response["message"];
-                    node.id = "error-message";
-                    node.style.color = "red";
-                    signinForm.appendChild(node);
-                }
+                email.value = "";
+                password.value = "";
+                message.textContent = response["message"];
             } else {
                 const token = response["token"];
                 localStorage.setItem("TOKEN", token);
@@ -225,13 +237,14 @@ signinForm.addEventListener("submit", function (event) {
 
 signupForm.addEventListener("submit", function (event) {
     event.preventDefault()
-    const name = document.querySelector("#signup-form-name").value;
-    const email = document.querySelector("#signup-form-email").value;
-    const password = document.querySelector("#signup-form-password").value;
+    const name = document.querySelector("#signup-form-name");
+    const email = document.querySelector("#signup-form-email");
+    const password = document.querySelector("#signup-form-password");
+    const message = document.querySelector("#signup-message")
     const data = {
-        "name": name,
-        "email": email,
-        "password": password
+        "name": name.value,
+        "email": email.value,
+        "password": password.value
     }
     fetch("/api/user", {
         method: "POST",
@@ -241,31 +254,18 @@ signupForm.addEventListener("submit", function (event) {
         .then((res) => res.json())
         .then(function (response) {
             if (response["error"] == true) {
-                const message = document.querySelector("#error-message")
-                if (!message) {
-                    const node = document.createElement("p");
-                    node.textContent = response["message"];
-                    node.id = "error-message";
-                    node.style.color = "red";
-                    signupForm.appendChild(node);
-                }
-            } else {
-                const message = document.querySelector("#error-message")
-                if (!message) {
-                    const node = document.createElement("p");
-                    node.textContent = "註冊成功，請登入";
-                    node.id = "error-message";
-                    node.style.color = "red";
-                    signupForm.appendChild(node);
-                }
-                else {
-                    message.textContent = "註冊成功，請登入";
-                }
+                name.value = "";
+                email.value = "";
+                password.value = "";
+                message.textContent = response["message"]
+            } else if (response["ok"] == true) {
+                message.textContent = "註冊成功，請登入";
             }
         })
         .catch((error) => console.error("Error:", error))
 
 })
+
 
 
 

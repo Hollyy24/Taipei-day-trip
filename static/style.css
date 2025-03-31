@@ -199,6 +199,9 @@
         font-weight: 400;
     }
 
+    #signin-message {
+        color: red;
+    }
 
     #signup-form {
         display: flex;
@@ -226,6 +229,9 @@
         font-weight: 400;
     }
 
+    #signup-message {
+        color: red;
+    }
 
     #slogan {
         left: 50%;
@@ -887,6 +893,9 @@
         font-weight: 400;
     }
 
+    #signin-message {
+        color: red;
+    }
 
     #signup-form {
         display: flex;
@@ -903,6 +912,7 @@
         font-weight: 400;
     }
 
+
     #signup-form button {
         padding: 10px;
         margin: 5px;
@@ -915,6 +925,9 @@
         font-weight: 400;
     }
 
+    #signup-message {
+        color: red;
+    }
 
     #slogan {
         left: 50%;
@@ -1544,6 +1557,9 @@
         font-weight: 400;
     }
 
+    #signin-message {
+        color: red;
+    }
 
     #signup-form {
         display: flex;
@@ -1572,6 +1588,9 @@
         font-weight: 400;
     }
 
+    #signin-message {
+        color: red;
+    }
 
     #slogan {
         left: 50%;
