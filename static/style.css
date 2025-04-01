@@ -51,6 +51,15 @@
         cursor: pointer;
     }
 
+    #nav-signout {
+        display: none;
+        color: #666666;
+        text-decoration: none;
+    }
+
+    #nav-signout:hover {
+        color: #757575;
+    }
 
 
     #hero-section {
@@ -86,7 +95,7 @@
         z-index: 10;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -95%);
         flex-direction: column;
         justify-content: center;
         text-align: center;
@@ -105,7 +114,7 @@
         z-index: 10;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -95%);
         flex-direction: column;
         justify-content: center;
         text-align: center;
@@ -172,6 +181,8 @@
     }
 
     #signin-form input {
+        border: #E8E8E8 1px solid;
+        border-radius: 5px;
         padding: 10px;
         margin: 5px;
         font-size: 16px;
@@ -190,6 +201,11 @@
         font-weight: 400;
     }
 
+    #signin-message {
+        display: none;
+        color: red;
+    }
+
 
     #signup-form {
         display: flex;
@@ -199,6 +215,8 @@
     }
 
     #signup-form input {
+        border: #E8E8E8 1px solid;
+        border-radius: 5px;
         padding: 10px;
         margin: 5px;
         font-size: 16px;
@@ -217,6 +235,10 @@
         font-weight: 400;
     }
 
+    #signup-message {
+        display: none;
+        color: red;
+    }
 
     #slogan {
         left: 50%;
@@ -633,6 +655,7 @@
         color: #666666;
         display: block;
         margin-bottom: 100px;
+        text-align: justify
     }
 
     .item-container {
@@ -640,6 +663,34 @@
         margin-bottom: 50px;
     }
 
+    #booking-titile {
+        margin: 30px auto;
+        width: 90%;
+        max-width: 1200px;
+    }
+
+    #booking-introduce-container {
+        margin: 30px auto;
+        display: flex;
+        width: 90%;
+        max-width: 1200px;
+    }
+
+    #contact-container {
+        margin: 30px auto;
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        max-width: 1200px;
+    }
+
+    #credit-container {
+        margin: 30px auto;
+        display: flex;
+        flex-direction: column;
+        width: 90%;
+        max-width: 1200px;
+    }
 
 }
 
@@ -698,6 +749,17 @@
         cursor: pointer;
     }
 
+    #nav-signout {
+        display: none;
+        color: #666666;
+        text-decoration: none;
+    }
+
+    #nav-signout:hover {
+        color: #757575;
+    }
+
+
 
     #hero-section {
         position: relative;
@@ -731,7 +793,7 @@
         z-index: 10;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -95%);
         flex-direction: column;
         justify-content: center;
         text-align: center;
@@ -751,7 +813,7 @@
         z-index: 10;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -95%);
         flex-direction: column;
         justify-content: center;
         text-align: center;
@@ -820,6 +882,8 @@
     }
 
     #signin-form input {
+        border: #E8E8E8 1px solid;
+        border-radius: 5px;
         padding: 10px;
         margin: 5px;
         font-size: 16px;
@@ -838,6 +902,10 @@
         font-weight: 400;
     }
 
+    #signin-message {
+        display: none;
+        color: red;
+    }
 
     #signup-form {
         display: flex;
@@ -848,11 +916,14 @@
     }
 
     #signup-form input {
+        border: #E8E8E8 1px solid;
+        border-radius: 5px;
         padding: 10px;
         margin: 5px;
         font-size: 16px;
         font-weight: 400;
     }
+
 
     #signup-form button {
         padding: 10px;
@@ -866,6 +937,10 @@
         font-weight: 400;
     }
 
+    #signup-message {
+        display: none;
+        color: red;
+    }
 
     #slogan {
         left: 50%;
@@ -1275,7 +1350,7 @@
         color: #666666;
         display: block;
         margin-bottom: 100px;
-
+        text-align: justify
     }
 
     .item-container {
@@ -1344,6 +1419,16 @@
         cursor: pointer;
     }
 
+    #nav-signout {
+        display: none;
+        color: #666666;
+        text-decoration: none;
+    }
+
+    #nav-signout:hover {
+        color: #757575;
+    }
+
 
     #hero-section {
         position: relative;
@@ -1377,7 +1462,7 @@
         z-index: 10;
         left: 50%;
         top: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -95%);
         flex-direction: column;
         justify-content: center;
         text-align: center;
@@ -1396,7 +1481,7 @@
         z-index: 10;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -95%);
         flex-direction: column;
         justify-content: center;
         text-align: center;
@@ -1467,6 +1552,8 @@
     }
 
     #signin-form input {
+        border: #E8E8E8 1px solid;
+        border-radius: 5px;
         padding: 10px;
         margin: 5px;
         font-size: 16px;
@@ -1485,6 +1572,10 @@
         font-weight: 400;
     }
 
+    #signin-message {
+        display: none;
+        color: red;
+    }
 
     #signup-form {
         display: flex;
@@ -1495,6 +1586,8 @@
     }
 
     #signup-form input {
+        border: #E8E8E8 1px solid;
+        border-radius: 50x;
         padding: 10px;
         margin: 5px;
         font-size: 16px;
@@ -1513,6 +1606,10 @@
         font-weight: 400;
     }
 
+    #signup-message {
+        display: none;
+        color: red;
+    }
 
     #slogan {
         left: 50%;
@@ -1930,6 +2027,7 @@
         width: 90%;
         margin-bottom: 100px;
         font-size: 14px;
+        text-align: justify
     }
 
     .item-container {
