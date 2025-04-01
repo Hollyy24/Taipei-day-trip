@@ -197,7 +197,6 @@ async def get_mrts(request: Request):
             content={"data":data},
             headers= headers
         )
-        return JSONResponse()
     except :
         return JSONResponse(
                 status_code=500,
@@ -228,8 +227,6 @@ def signJWT(user):
         "email":user["email"],
         "exp" : (datetime.now(tz=timezone.utc) + timedelta(hours=24*7)).timestamp()
     }
-    print(payload)
-    print(JWT_SECRET)
     token = jwt.encode(payload,JWT_SECRET,"HS256")
     print(token)
     return token

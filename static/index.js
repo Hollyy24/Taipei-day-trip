@@ -328,6 +328,7 @@ function showSignin() {
     navBg.style.display = "flex";
     dialogSignup.style.display = "none";
     dialogSignin.style.display = "flex";
+    signinMessage.style.display = "none";
     signinMessage.textContent = "";
     signinEmail.value = "";
     signinPassword.value = "";
@@ -337,7 +338,7 @@ function showSignup() {
     navBg.style.display = "flex";
     dialogSignin.style.display = "none";
     dialogSignup.style.display = "flex";
-    signupMessage.textContent = "";
+    signupMessage.style.display = "none";
     signupname.value = "";
     signupEmail.value = "";
     signupPassword.value = "";
@@ -389,6 +390,7 @@ signinForm.addEventListener("submit", function (event) {
             if (response["error"] == true) {
                 email.value = "";
                 password.value = "";
+                message.style.display = "flex";
                 message.textContent = response["message"];
             } else {
                 const token = response["token"];
@@ -425,8 +427,10 @@ signupForm.addEventListener("submit", function (event) {
                 name.value = "";
                 email.value = "";
                 password.value = "";
+                message.style.display = "flex";
                 message.textContent = response["message"]
             } else if (response["ok"] == true) {
+                message.style.display = "flex";
                 message.textContent = "註冊成功，請登入";
             }
         })
