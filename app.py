@@ -232,9 +232,6 @@ def signJWT(user):
     return token
 
 
-
-
-
 @app.post("/api/user")
 async def sign_up(user:User):
     cnx = cnxpool.get_connection()
@@ -301,6 +298,125 @@ async def sign_in(user:SigninForm):
         cnx.close()
 
 
+class BookingData(BaseModel):
+        attractionId: str
+        date: str
+        time: str
+        price:str
+        
+
+@app.get("/api/booking")
+async def get_booking(authorization: str = Header(None)):
+    print("here is get booking")
+    token = authorization.split("Bearer ")[1]
+    user = jwt.decode(token,JWT_SECRET,algorithms="HS256")
+    exp = user.get("exp")
+    now = datetime.now(timezone.utc).timestamp()
+    
+    if exp and exp < now:
+        return JSONResponse(
+            status_code=403,
+            content={"error":True,"message":"未登入系統，拒絕存取"})
+    user_id = user.get("id")
+    cnx = cnxpool.get_connection()
+    cursor = cnx.cursor(dictionary=True)
+    try:
+        sql = "SELECT attraction_id,name,image,date,time,address,price FROM booking WHERE user_id = %s"
+        cursor.execute(sql,(user_id,))
+        result = cursor.fetchone()
+        if result is None:
+            data = None
+        else:
+            data={
+            "attraction": {
+                "id": result["attraction_id"],
+                "name": result["name"],
+                "address": result["address"],
+                "image": result["image"],
+                },
+            "date": result["date"],
+            "time": result["time"],
+            "price": result["price"]
+            }
+        return JSONResponse(status_code=200,content={"data":data})
+    except Exception as e:
+        print(e)
+    finally:
+        cnx.close()
+
+
+@app.post("/api/booking")
+async def add_booking(bookingdata:BookingData,authorization: str = Header(None)):
+    print("here is add_booking")
+    token = authorization.split("Bearer ")[1]
+    user = jwt.decode(token,JWT_SECRET,algorithms="HS256")
+    exp = user.get("exp")
+    now = datetime.now(timezone.utc).timestamp()
+    
+    if exp and exp < now:
+        return JSONResponse(
+            status_code=403,
+            content={"error":True,"message":"未登入系統，拒絕存取"})
+    user_id = user.get("id")
+    cnx = cnxpool.get_connection()
+    cursor = cnx.cursor(dictionary=True)
+    try:
+        find_sql = "SELECT * FROM booking WHERE user_id = %s"
+        cursor.execute(find_sql,(user_id,))
+        allready_booking = cursor.fetchone()
+        if allready_booking:
+            print("delet allready")
+            cursor.execute("DELETE FROM  booking WHERE user_id = %s",(user_id,))
+            cnx.commit()
+            
+        search_sql  = "SELECT name,address,images FROM spots WHERE id = %s"
+        cursor.execute(search_sql,(bookingdata.attractionId,))
+        result = cursor.fetchone()
+        images_url = json.loads(result["images"])
+        insert_sql = "INSERT INTO booking (attraction_id,date,time,price,name,address,image,user_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(insert_sql, (bookingdata.attractionId,bookingdata.date,bookingdata.time,bookingdata.price,result["name"],result["address"],images_url[0],user_id,)) 
+        cnx.commit()
+        return JSONResponse(status_code=200,content={"ok":True})
+    except mysql.connector.IntegrityError:
+        return JSONResponse(
+            status_code=400,
+            content={"error":True,"message":"建立失敗，輸入不正確或其他原因"}
+        )
+    except Exception as e:
+        print(e)
+        return JSONResponse(
+            status_code=500,
+            content={"error":True,"message":"伺服器內部錯誤"}
+        )
+    finally:
+        cnx.close()
+
+@app.delete("/api/booking")
+async def delete_booking(authorization: str = Header(None)):
+    token = authorization.split("Bearer ")[1]
+    user = jwt.decode(token,JWT_SECRET,algorithms="HS256")
+    exp = user.get("exp")
+    now = datetime.now(timezone.utc).timestamp()
+    if exp and exp < now:
+        return JSONResponse(
+            status_code=403,
+            content={"error":True,"message":"未登入系統，拒絕存取"})
+    user_id = user.get("id")
+    cnx = cnxpool.get_connection()
+    cursor = cnx.cursor()
+    try:
+        sql = "DELETE FROM  booking WHERE user_id = %s"
+        cursor.execute(sql,(user_id,))
+        cnx.commit()
+        return JSONResponse(status_code=200,content={"ok":True})
+    except Exception as e:
+        print(e)
+        return JSONResponse(
+            status_code=500,
+            content={"error":True,"message":"伺服器內部錯誤"}
+        )
+    finally:
+        cnx.close()
         
 if __name__ == "__main__":
 	uvicorn.run(app,host="0.0.0.0",port=8000)

@@ -1,136 +1,95 @@
-async function getAttrctionData(attractionId) {
-    try {
-        let response = await fetch(`/api/attraction/${attractionId}`);
-        let data = await response.json();
-        renderAttrction(data["data"]);
-    }
-    catch (error) {
-        console.error("Error", error);
-    }
-}
-
-
-function renderAttrction(data) {
-    document.querySelector("#content-title").textContent = data["name"];
-    document.querySelector("#content-category-mrt").textContent = data["category"] + " at " + data["mrt"];
-    document.querySelector("#attraction-detail").textContent = data["description"];
-    document.querySelector("#attraction-address").textContent = data["address"]
-    document.querySelector("#attraction-transport").textContent = data["transport"]
-    imagesLoading(data["images"]);
-}
-
-function imagesLoading(imagesUrl) {
-    const dotList = document.querySelector("#dot-list");
-    const imageList = document.querySelector("#images-list");
-
-    for (let index in imagesUrl) {
-        let picture = document.createElement("img");
-        picture.src = imagesUrl[index];
-        picture.className = "images";
-        picture.id = "image-" + [index];
-        let dot = document.createElement("span");
-        dot.id = "dot-" + [index];
-        if (index == 0) {
-            dot.className = "blackdot"
-        } else { dot.className = "dot"; }
-
-        imageList.appendChild(picture);
-        dotList.appendChild(dot);
-
-    }
-
-}
-
-
-
-const path = window.location.pathname;
-const id = path.replace("/attraction/", "");
-const price = document.querySelector("#price");
-const morning = document.querySelector("#morning");
-const afternoon = document.querySelector("#afternoon");
-const homePage = document.querySelector("#nav-left");
 
 
 checkJwt()
-getAttrctionData(id)
+getBooking()
 
-
-homePage.addEventListener("click", function () {
-    window.location.href = "/";
-})
-
-
-
-
-morning.addEventListener("click", function () {
-    price.textContent = "2000"
-});
-
-afternoon.addEventListener("click", function () {
-    price.textContent = "2500"
-})
-
-
-// calender
-const time = document.querySelector('#time');
-const calender = document.querySelector('#calender');
-
-time.addEventListener('click', function () {
-    this.showPicker();
-});
-calender.addEventListener('click', function () {
-    time.showPicker();
-});
-
-
-
-
-
-// image carousel
-
-const leftArrow = document.querySelector("#image-left");
-const rightArrow = document.querySelector("#image-right");
-
-let index = 0;
-
-function showImage(imageIndex) {
-    const dots = document.querySelectorAll(".dot, .blackdot");
-    const images = document.querySelectorAll(".images");
-    let length = images.length;
-
-    if (imageIndex < 0) {
-        index = length - 1;
-    } else if (imageIndex >= length) {
-        index = 0;
-    } else {
-        index = imageIndex;
-    }
-    images.forEach((img) => {
-        if (img.id === `image-${index}`) {
-            img.style.display = "block"
-        } else {
-            img.style.display = "none"
-        }
-    });
-
-    dots.forEach((dot) => {
-        if (dot.id == `dot-${index}`) {
-            dot.className = "blackdot"
-        } else {
-            dot.className = "dot";
-        }
-    });
+async function getBooking() {
+    const token = localStorage.getItem("TOKEN");
+    fetch("/api/booking", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            renderBooking(data["data"])
+        })
+        .catch((error) => console.log(error))
 }
 
 
-leftArrow.addEventListener("click", function () {
-    showImage(index - 1);
-});
+async function deleteBooking() {
+    const token = localStorage.getItem("TOKEN");
+    fetch("api/booking", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+        },
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            if (data["ok"]) {
+                window.location.reload()
+            }
+        })
+        .catch((error) => console.log(error))
+}
 
 
-rightArrow.addEventListener("click", function () {
-    showImage(index + 1);
-});
+function renderBooking(data) {
+    console.log(data)
+    if (!data) {
+        const allSection = document.querySelectorAll("section");
+        const allHr = document.querySelectorAll("hr");
+
+        allSection.forEach((item) => item.remove())
+        allHr.forEach((item) => item.remove())
+
+        const noBooking = document.querySelector("#with-no-data");
+        const footer = document.querySelector("footer");
+        noBooking.style.display = "flex";
+        footer.style.position = "relative"
+        footer.style.height = "100vh"
+
+
+
+    } else {
+        const picture = document.querySelector("#booking-content-image");
+        const name = document.querySelector("#booking-content-name");
+        const date = document.querySelector("#booking-content-date");
+        const time = document.querySelector("#booking-content-time");
+        const addres = document.querySelector("#booking-content-address");
+        const price = document.querySelector("#booking-content-price");
+        const totalPrice = document.querySelector("#booking-total-price");
+
+        picture.src = data["attraction"]["image"]
+        name.textContent = data["attraction"]["name"]
+        addres.textContent = data["attraction"]["address"]
+        date.textContent = data["date"]
+        price.textContent = data["price"]
+        totalPrice.textContent = data["price"]
+        if (data["time"] == "morning") {
+            time.textContent = "早上九點到下午四點";
+        } else if (data["time"] == "afternoon") {
+            time.textContent = "下午兩點到晚上九點";
+        }
+
+    }
+
+}
+
+
+const deleteButton = document.querySelector("#booking-delete-button");
+
+
+deleteButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    deleteBooking();
+})
+
 
 
 
@@ -156,6 +115,10 @@ const signupEmail = document.querySelector("#signup-form-email");
 const signupPassword = document.querySelector("#signup-form-password");
 const signupMessage = document.querySelector("#signup-message");
 
+const homePage = document.querySelector("#nav-left");
+homePage.addEventListener("click", function () {
+    window.location.href = "/";
+})
 
 function showSignin() {
     navBg.style.display = "flex";
@@ -275,8 +238,10 @@ signupForm.addEventListener("submit", function (event) {
 
 
 async function checkJwt() {
+    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
     if (token) {
+        console.log("have token")
         fetch("/api/user/auth", {
             method: "GET",
             headers: {
@@ -286,6 +251,7 @@ async function checkJwt() {
             .then((response) => response.json())
             .then((data) => {
                 if (data["data"]) {
+                    console.log(data);
                     const signup = document.querySelector("#nav-signup");
                     const signin = document.querySelector("#nav-signin");
                     const signout = document.querySelector("#nav-signout");
@@ -300,13 +266,10 @@ async function checkJwt() {
 
 function signout() {
     localStorage.removeItem("TOKEN");
-    location.reload()
-
+    window.location.href = "/";
 }
 
 
-
-const bookButton = document.querySelector("#time-form-button");
 const navBook = document.querySelector("#nav-booking");
 
 
@@ -323,45 +286,32 @@ navBook.addEventListener("click", function (event) {
 
 
 
-bookButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    console.log("bookButton");
+async function checkJwt() {
+    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
-    if (token == null) {
-        showSignin()
-    } else {
-        let timeForTravel;
-        if (!time.value) {
-            alert("請選擇出遊日期")
-        } else {
-            if (morning.checked) {
-                timeForTravel = "morning"
+    if (token) {
+        fetch("/api/user/auth", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
             }
-            if (afternoon.checked) {
-                timeForTravel = "afternoon"
-            }
-            const price = document.querySelector("#price").textContent;
-            const data = {
-                "attractionId": id,
-                "date": time.value,
-                "time": timeForTravel,
-                "price": price,
-            }
-
-            console.log(data);
-            console.log("start fetch")
-            fetch("/api/booking", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(data)
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data["data"]) {
+                    const signup = document.querySelector("#nav-signup");
+                    const signin = document.querySelector("#nav-signin");
+                    const signout = document.querySelector("#nav-signout");
+                    const username = document.querySelector("#booking-user-name")
+                    username.textContent = data["data"]["name"];
+                    signin.style.display = "none";
+                    signup.style.display = "none";
+                    signout.style.display = "flex";
+                }
             })
-                .then((res) => res.json())
-                .then((res) => console.log(res))
-                .catch((error) => console.log(error))
-        }
-    } window.location.href = "/booking"
-})
+            .catch((error) => console.log(error));
+    } else {
+        window.location.href = "/"
+    }
+}
 
