@@ -325,9 +325,8 @@ navBook.addEventListener("click", function (event) {
 
 bookButton.addEventListener("click", function (event) {
     event.preventDefault();
-    console.log("bookButton");
     const token = localStorage.getItem("TOKEN");
-    if (token == null) {
+    if (!token) {
         showSignin()
     } else {
         let timeForTravel;
@@ -347,9 +346,6 @@ bookButton.addEventListener("click", function (event) {
                 "time": timeForTravel,
                 "price": price,
             }
-
-            console.log(data);
-            console.log("start fetch")
             fetch("/api/booking", {
                 method: "POST",
                 headers: {
@@ -359,9 +355,18 @@ bookButton.addEventListener("click", function (event) {
                 body: JSON.stringify(data)
             })
                 .then((res) => res.json())
-                .then((res) => console.log(res))
+                .then(function (res) {
+                    console.log(res)
+                    console.log(res["ok"])
+                    if (res["ok"]) {
+                        window.location.href = "/booking"
+                    }
+                })
                 .catch((error) => console.log(error))
+
         }
-    } window.location.href = "/booking"
-})
+
+    }
+}
+)
 
