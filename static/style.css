@@ -705,6 +705,8 @@
         width: 90%;
         color: #666666;
         font-size: 14px;
+        max-width: 1200px;
+
     }
 
 
@@ -1464,21 +1466,11 @@
         margin: 30px auto;
         width: 90%;
         max-width: 1200px;
-    }
-
-
-
-    .inline-text {
-        display: inline;
-    }
-
-    #booking-title {
-        margin: 30px auto;
-        justify-content: center;
-        width: 90%;
         color: #666666;
         font-size: 20px;
     }
+
+
 
     #with-no-data {
         display: none;
@@ -1486,6 +1478,8 @@
         width: 90%;
         color: #666666;
         font-size: 14px;
+        max-width: 1200px;
+
     }
 
 

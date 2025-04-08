@@ -52,7 +52,7 @@ function renderBooking(data) {
         const footer = document.querySelector("footer");
         noBooking.style.display = "flex";
         footer.style.position = "relative"
-        footer.style.height = "100vh"
+        footer.style.height = "80vh";
 
 
 
