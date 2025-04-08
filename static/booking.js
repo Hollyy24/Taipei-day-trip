@@ -46,7 +46,9 @@ function renderBooking(data) {
         const allHr = document.querySelectorAll("hr");
 
         allSection.forEach((item) => item.remove())
-        allHr.forEach((item) => item.remove())
+        allHr.forEach(function (item) {
+            if (item.id != "seperator") { item.remove() }
+        })
 
         const noBooking = document.querySelector("#with-no-data");
         const footer = document.querySelector("footer");
