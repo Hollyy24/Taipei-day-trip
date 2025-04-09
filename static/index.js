@@ -469,3 +469,17 @@ function signout() {
     location.reload()
 
 }
+
+
+const navBook = document.querySelector("#nav-booking");
+
+
+navBook.addEventListener("click", function (event) {
+    event.preventDefault();
+    const token = localStorage.getItem("TOKEN");
+    if (token == null) {
+        showSignin()
+    } else {
+        window.location.href = "/booking/"
+    }
+})
