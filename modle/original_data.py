@@ -3,10 +3,9 @@ from mysql.connector import pooling
 import json
 from json import load
 import os
-from dotenv import load_dotenv
 from datetime import datetime
 
-load_dotenv()
+
 
 mydb = mysql.connector.connect(
     host = "localhost",

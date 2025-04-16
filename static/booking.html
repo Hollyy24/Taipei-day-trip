@@ -80,9 +80,9 @@
       <div id="contact-container">
         <h2>您的聯絡資訊</h2>
         <form id="contact-form">
-          <label>聯絡姓名：</label><input name="name"><br>
-          <label>聯絡信箱：</label><input type="email" name="email"><br>
-          <label>手機號碼：</label><input name="phonenumber">
+          <label>聯絡姓名：</label><input name="name" id="order-name" required><br>
+          <label>聯絡信箱：</label><input type="email" id="order-email" name="email" required><br>
+          <label>手機號碼：</label><input name="phonenumber" id="order-phone" required>
         </form>
         <p><strong>請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</strong></p>
       </div>
@@ -91,12 +91,23 @@
     <section>
       <div id="credit-container">
         <h2>信用卡付款資訊</h2>
-        <form id="credit-form">
-          <label>卡片號碼：</label><input type="password" placeholder="xxxx xxxx xxxx xxxx" required><br>
-          <label>過期時間：</label><input placeholder=" MM/YY"><br>
-          <label>驗證密碼：</label><input placeholder=" CVV">
-        </form>
+        <div class="tappay-container">
+          <label>卡片號碼：</label>
+          <div class="tpfield" id="card-number"></div>
+          <p id="check-for-number"></p>
+        </div>
+        <div class="tappay-container">
+          <label>過期時間：</label>
+          <div class="tpfield" id="card-expiration-date"></div>
+          <p id="check-for-exp"></p>
+        </div>
+        <div class="tappay-container">
+          <label>驗證密碼：</label>
+          <div class="tpfield" id="card-ccv"></div>
+          <p id="check-for-ccv"></p>
+        </div>
       </div>
+
     </section>
     <hr>
     <section>
@@ -111,6 +122,8 @@
   </footer>
 </body>
 <script src="/static/booking.js"></script>
+<script src="https://js.tappaysdk.com/sdk/tpdirect/v5.19.2"></script>
+<script src="/static/order.js"></script>
 
 
 
