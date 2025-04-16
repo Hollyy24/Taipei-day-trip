@@ -20,6 +20,7 @@
         margin: 0 auto;
     }
 
+
     #nav-left {
         color: #448899;
         font-size: 30px;
@@ -791,6 +792,50 @@
 
     }
 
+
+
+    .tpfield {
+        margin: 10px;
+        border: 1px #E8E8E8 solid;
+        width: 200px;
+        height: 30px;
+        padding: 5px;
+        justify-content: flex-start;
+
+
+    }
+
+    .tappay-container label {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .tappay-container {
+        display: grid;
+        grid-template-columns: 80px 1fr 2fr;
+        column-gap: 5px;
+    }
+
+    #order-result {
+        margin: 50px auto;
+        color: #666666;
+        font-weight: 400;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    #order-number {
+        margin: 30px auot;
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    #order-detail {
+        margin: 10px auto;
+        font-size: 15px;
+        font-weight: 100;
+    }
 }
 
 
@@ -1566,6 +1611,48 @@
     }
 
 
+    .tpfield {
+        margin: 10px;
+        border: 1px #E8E8E8 solid;
+        width: 200px;
+        height: 30px;
+        padding: 5px;
+        justify-content: flex-start;
+
+
+    }
+
+    .tappay-container label {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .tappay-container {
+        display: grid;
+        grid-template-columns: 80px 1fr 2fr;
+        column-gap: 5px;
+    }
+
+    #order-result {
+        margin: 50px auto;
+        color: #666666;
+        font-weight: 400;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    #order-number {
+        margin: 30px auot;
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    #order-detail {
+        margin: 10px auto;
+        font-size: 15px;
+        font-weight: 100;
+    }
 }
 
 
@@ -2374,6 +2461,49 @@
         margin-right: 0;
         margin-left: auto;
 
+    }
+
+    .tpfield {
+        margin: 10px;
+        border: 1px #E8E8E8 solid;
+        width: 150px;
+        height: 30px;
+        padding: 5px;
+        justify-content: flex-start;
+
+
+    }
+
+    .tappay-container label {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .tappay-container {
+        display: grid;
+        grid-template-columns: 80px 1fr 2fr;
+        column-gap: 5px;
+    }
+
+    #order-result {
+        margin: 50px auto;
+        color: #666666;
+        font-weight: 400;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    #order-number {
+        margin: 30px auot;
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    #order-detail {
+        margin: 10px auto;
+        font-size: 15px;
+        font-weight: 100;
     }
 
 }

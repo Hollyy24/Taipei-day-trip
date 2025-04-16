@@ -1,140 +1,3 @@
-async function getAttrctionData(attractionId) {
-    try {
-        let response = await fetch(`/api/attraction/${attractionId}`);
-        let data = await response.json();
-        console.log(data)
-        renderAttrction(data["data"]);
-    }
-    catch (error) {
-        console.error("Error", error);
-    }
-}
-
-
-function renderAttrction(data) {
-    document.querySelector("#content-title").textContent = data["name"];
-    document.querySelector("#content-category-mrt").textContent = data["category"] + " at " + data["mrt"];
-    document.querySelector("#attraction-detail").textContent = data["description"];
-    document.querySelector("#attraction-address").textContent = data["address"]
-    document.querySelector("#attraction-transport").textContent = data["transport"]
-    imagesLoading(data["images"]);
-}
-
-function imagesLoading(imagesUrl) {
-    const dotList = document.querySelector("#dot-list");
-    const imageList = document.querySelector("#images-list");
-
-    for (let index in imagesUrl) {
-        let picture = document.createElement("img");
-        picture.src = imagesUrl[index];
-        picture.className = "images";
-        picture.id = "image-" + [index];
-        let dot = document.createElement("span");
-        dot.id = "dot-" + [index];
-        if (index == 0) {
-            dot.className = "blackdot"
-        } else { dot.className = "dot"; }
-
-        imageList.appendChild(picture);
-        dotList.appendChild(dot);
-
-    }
-
-}
-
-
-
-const path = window.location.pathname;
-const id = path.replace("/attraction/", "");
-const price = document.querySelector("#price");
-const morning = document.querySelector("#morning");
-const afternoon = document.querySelector("#afternoon");
-const homePage = document.querySelector("#nav-left");
-
-
-checkJwt()
-getAttrctionData(id)
-
-
-homePage.addEventListener("click", function () {
-    window.location.href = "/";
-})
-
-
-
-
-morning.addEventListener("click", function () {
-    price.textContent = "2000"
-});
-
-afternoon.addEventListener("click", function () {
-    price.textContent = "2500"
-})
-
-
-// calender
-const time = document.querySelector('#time');
-const calender = document.querySelector('#calender');
-
-time.addEventListener('click', function () {
-    this.showPicker();
-});
-calender.addEventListener('click', function () {
-    time.showPicker();
-});
-
-
-
-
-
-// image carousel
-
-const leftArrow = document.querySelector("#image-left");
-const rightArrow = document.querySelector("#image-right");
-
-let index = 0;
-
-function showImage(imageIndex) {
-    const dots = document.querySelectorAll(".dot, .blackdot");
-    const images = document.querySelectorAll(".images");
-    let length = images.length;
-
-    if (imageIndex < 0) {
-        index = length - 1;
-    } else if (imageIndex >= length) {
-        index = 0;
-    } else {
-        index = imageIndex;
-    }
-    images.forEach((img) => {
-        if (img.id === `image-${index}`) {
-            img.style.display = "block"
-        } else {
-            img.style.display = "none"
-        }
-    });
-
-    dots.forEach((dot) => {
-        if (dot.id == `dot-${index}`) {
-            dot.className = "blackdot"
-        } else {
-            dot.className = "dot";
-        }
-    });
-}
-
-
-leftArrow.addEventListener("click", function () {
-    showImage(index - 1);
-});
-
-
-rightArrow.addEventListener("click", function () {
-    showImage(index + 1);
-});
-
-
-
 
 
 // signin & signup
@@ -157,6 +20,10 @@ const signupEmail = document.querySelector("#signup-form-email");
 const signupPassword = document.querySelector("#signup-form-password");
 const signupMessage = document.querySelector("#signup-message");
 
+const homePage = document.querySelector("#nav-left");
+homePage.addEventListener("click", function () {
+    window.location.href = "/";
+})
 
 function showSignin() {
     navBg.style.display = "flex";
@@ -276,8 +143,10 @@ signupForm.addEventListener("submit", function (event) {
 
 
 async function checkJwt() {
+    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
     if (token) {
+        console.log("have token")
         fetch("/api/user/auth", {
             method: "GET",
             headers: {
@@ -296,18 +165,72 @@ async function checkJwt() {
                 }
             })
             .catch((error) => console.log(error));
+    } else {
+        window.location.href = "/"
     }
 }
 
 function signout() {
     localStorage.removeItem("TOKEN");
-    location.reload()
-
+    window.location.href = "/";
 }
 
 
+const footer = document.querySelector("footer");
+footer.style.position = "relative"
+footer.style.height = "80vh";
 
-const bookButton = document.querySelector("#time-form-button");
+
+const path = window.location.search
+const orderNumber = path.replace("?number=", "");
+
+
+async function getOrderdata(orderNumber) {
+    if (!orderNumber) {
+        return false
+    }
+    const TOKEN = localStorage.getItem("TOKEN")
+    fetch(`api/users/${orderNumber}`, {
+        method: "GET",
+        headers: {
+            "Contest-Type": "application/json",
+            "Authorization": `Bearer ${TOKEN}`
+        }
+    })
+        .then((res) => res.json())
+        .then((function (res) {
+            let status = res.data.status
+            let orderNumber = res.data.number
+            renderOrder(status, orderNumber)
+        }))
+        .catch((error) => console.log(error))
+}
+
+
+function renderOrder(status, orderNumber) {
+    const statusText = document.querySelector("#order-status");
+    const orderNumberText = document.querySelector("#order-number");
+    const orderDtail = document.querySelector("#order-detail")
+    if (status == 1) {
+        statusText.textContent = "行程預定成功"
+        statusText.style.color = "#666666"
+        orderDtail.textContent = "請記住此編號，或到會員中心查詢歷史訂單"
+
+    }
+    orderNumberText.textContent = orderNumber;
+}
+
+
+homePage.addEventListener("click", function () {
+    window.location.href = "/";
+})
+
+
+checkJwt()
+getOrderdata(orderNumber);
+
+
+
 const navBook = document.querySelector("#nav-booking");
 
 
@@ -320,54 +243,3 @@ navBook.addEventListener("click", function (event) {
         window.location.href = "/booking/"
     }
 })
-
-
-
-
-bookButton.addEventListener("click", function (event) {
-    event.preventDefault();
-    const token = localStorage.getItem("TOKEN");
-    if (!token) {
-        showSignin()
-    } else {
-        let timeForTravel;
-        if (!time.value) {
-            alert("請選擇出遊日期")
-        } else {
-            if (morning.checked) {
-                timeForTravel = "morning"
-            }
-            if (afternoon.checked) {
-                timeForTravel = "afternoon"
-            }
-            const price = document.querySelector("#price").textContent;
-            const data = {
-                "attractionId": id,
-                "date": time.value,
-                "time": timeForTravel,
-                "price": price,
-            }
-            fetch("/api/booking", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(data)
-            })
-                .then((res) => res.json())
-                .then(function (res) {
-                    console.log(res)
-                    console.log(res["ok"])
-                    if (res["ok"]) {
-                        window.location.href = "/booking"
-                    }
-                })
-                .catch((error) => console.log(error))
-
-        }
-
-    }
-}
-)
-
