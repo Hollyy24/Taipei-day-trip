@@ -3,7 +3,9 @@ from mysql.connector import pooling
 import os 
 import json
 
+from dotenv import load_dotenv
 
+load_dotenv()
 
 dbconfig = {
     "host" : "localhost",

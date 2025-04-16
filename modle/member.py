@@ -3,7 +3,9 @@ from mysql.connector import pooling
 from datetime import datetime, timedelta, timezone
 import os 
 import jwt
+from dotenv import load_dotenv
 
+load_dotenv()
 dbconfig = {
     "host": "localhost",
     "user": os.getenv("DATA_USER"),
