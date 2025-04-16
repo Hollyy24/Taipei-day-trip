@@ -143,7 +143,8 @@ async function onSubmit(event) {
 
             })
             .catch((err) => {
-                console.error("付款錯誤：", err);
+                console.error(err);
+                alert("預定失敗，請重新預定")
             });
 
     })
