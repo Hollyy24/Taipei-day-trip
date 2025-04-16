@@ -90,3 +90,4 @@ class Booking:
             return False
         finally:
             cnx.close()
+    

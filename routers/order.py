@@ -5,7 +5,7 @@ from modle.member import Member
 import json
 
 from modle.order import Order
-
+from modle.booking import Booking
 order_router = APIRouter()
 
 
@@ -24,7 +24,7 @@ async def request_to_tappay(orderdata:OrderData,authorization: str = Header(None
         return JSONResponse(
             status_code=403,
             content={"error":True,"message":"未登入系統，拒絕存取"})
-
+    user_id = user_data.get("id")
     pay_result  = Order.send_to_tappay(orderdata)
     if pay_result == 400:    
         return JSONResponse(
@@ -35,6 +35,7 @@ async def request_to_tappay(orderdata:OrderData,authorization: str = Header(None
             status_code=500,
             content={"error":True,"message":"伺服器內部錯誤"})
     else:
+        Booking.delete_booking_data(user_id)
         return JSONResponse(
                 status_code=200,
                 content={"data":pay_result})

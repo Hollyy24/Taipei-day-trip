@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector import pooling
+from modle.booking import Booking
 import os 
 import json
 from dotenv import load_dotenv
@@ -54,8 +55,9 @@ class Order:
             response_data  = response.read()
             result =json.loads(response_data )
             if result['status'] == 0 :
+                
                 if Order.set_order_status(ordernumber) is False:
-                    return 400
+                    return 400 
                 data = {
                         "number":ordernumber,
                         "payment":{
@@ -63,7 +65,6 @@ class Order:
                             "message":"付款成功"
                         }
                     }
-                
                 
                 return data
             else:
