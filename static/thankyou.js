@@ -156,7 +156,6 @@ async function checkJwt() {
             .then((response) => response.json())
             .then((data) => {
                 if (data["data"]) {
-                    console.log(data);
                     const signup = document.querySelector("#nav-signup");
                     const signin = document.querySelector("#nav-signin");
                     const signout = document.querySelector("#nav-signout");
@@ -200,7 +199,6 @@ async function getOrderdata(orderNumber) {
     })
         .then((res) => res.json())
         .then((function (res) {
-            console.log(res)
             let status = res.data.status
             let orderNumber = res.data.number
             renderOrder(status, orderNumber)

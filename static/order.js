@@ -119,7 +119,6 @@ async function onSubmit(event) {
             "order": orderInformation
         };
         let token = localStorage.getItem("TOKEN");
-        console.log("data:" + JSON.stringify(data))
         fetch("/api/users", {
             method: "POST",
             headers: {
