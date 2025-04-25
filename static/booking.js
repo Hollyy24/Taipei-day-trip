@@ -24,9 +24,9 @@ homePage.addEventListener("click", function () {
 })
 
 async function getBooking() {
-    showLoading();
     const token = localStorage.getItem("TOKEN");
     try {
+        showLoading();
         let response = await fetch("/api/booking", {
             method: "GET",
             headers: {
@@ -70,7 +70,6 @@ async function deleteBooking() {
 
 
 function renderBooking(data) {
-    console.log(data)
     if (!data) {
         const allSection = document.querySelectorAll("section");
         const allHr = document.querySelectorAll("hr");
