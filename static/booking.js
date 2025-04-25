@@ -308,6 +308,9 @@ navBook.addEventListener("click", function (event) {
 async function checkJwt() {
     console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
+    if (!token) {
+        window.location.href = "/";
+    }
     if (token) {
         fetch("/api/user/auth", {
             method: "GET",

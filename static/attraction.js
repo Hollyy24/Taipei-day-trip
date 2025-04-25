@@ -2,12 +2,14 @@
 let loadingTimeout;
 
 function showLoading() {
+    console.log("start")
     loadingTimeout = setTimeout(() => {
         document.getElementById("for-loading").style.display = "flex";
     }, 500);
 }
 
 function closeLoading() {
+    console.log("end")
     clearTimeout(loadingTimeout);
     document.getElementById("for-loading").style.display = "none";
 }
@@ -296,7 +298,7 @@ signinForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-        .finally(closeLoading())
+        .finally(() => { closeLoading() })
 
 
 })

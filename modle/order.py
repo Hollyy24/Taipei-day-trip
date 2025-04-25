@@ -43,29 +43,33 @@ class Order:
         print("start sent request!")
         req = urllib.request.Request(URL, data=json_data, headers=headers, method='POST')
         print("0")
-        with urllib.request.urlopen(req) as response:
-            print("1")
-            response_data  = response.read()
-            print("2")
-            result =json.loads(response_data )
-            print("3")
-            if result['status'] == 0 :
-                print("4")
-                if Order.set_order_status(ordernumber) is False:
-                    print("5")
-                    return 400 
-                data = {
-                        "number":ordernumber,
-                        "payment":{
-                            "status":0,
-                            "message":"付款成功"
+        try:
+            with urllib.request.urlopen(req) as response:
+                print("1")
+                response_data  = response.read()
+                print("2")
+                result =json.loads(response_data )
+                print("3")
+                if result['status'] == 0 :
+                    print("4")
+                    if Order.set_order_status(ordernumber) is False:
+                        print("5")
+                        return 400 
+                    data = {
+                            "number":ordernumber,
+                            "payment":{
+                                "status":0,
+                                "message":"付款成功"
+                            }
                         }
-                    }
-                
-                return data
-            else:
-                print(result['msg'])
-                return 400
+                    
+                    return data
+                else:
+                    print(result['msg'])
+                    return 400
+        except Exception as e:
+            print(e)
+            return 400
     
     
     def create_orderdata(data,user_id):

@@ -1,13 +1,15 @@
-let loading;
 
 function showLoading() {
+    console.log("start")
     loadingTimeout = setTimeout(() => {
+        console.log("open loading effect")
         document.getElementById("for-loading").style.display = "flex";
     }, 500);
 }
 
 function closeLoading() {
-    clearTimeout(loading);
+    console.log("end")
+    clearTimeout(loadingTimeout);
     document.getElementById("for-loading").style.display = "none";
 }
 
@@ -17,6 +19,8 @@ const orderName = document.querySelector("#order-name");
 const orderEmail = document.querySelector("#order-email");
 const orderPhone = document.querySelector("#order-phone");
 const allSection = document.querySelectorAll("section");
+
+
 function checkEmpty(inputElement) {
     inputElement.addEventListener("input", function () {
         if (inputElement.value.trim() === "") {
@@ -153,6 +157,7 @@ if (allSection.length != 0) {
             };
             showLoading()
             let token = localStorage.getItem("TOKEN");
+            console.log("sent to  tappay")
             fetch("/api/users", {
                 method: "POST",
                 headers: {
@@ -171,14 +176,17 @@ if (allSection.length != 0) {
                     if (result.error) {
                         console.log(result.message)
                         alert("行程預定失敗")
+                        console.log("booking error")
                     }
-
                 })
                 .catch((err) => {
                     console.error(err);
+                    console.log("booking error2")
                     alert("預定失敗，請重新預定")
                 })
-                .finally(closeLoading())
+                .finally(() => {
+                    closeLoading()
+                })
 
         });
     }

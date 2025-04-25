@@ -135,7 +135,6 @@ signinForm.addEventListener("submit", function (event) {
     })
         .then((res) => res.json())
         .then(function (response) {
-            closeLoading()
             if (response["error"] == true) {
                 email.value = "";
                 password.value = "";
@@ -150,6 +149,7 @@ signinForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
+        .finally(() => { closeLoading() })
 
 
 })
@@ -190,7 +190,7 @@ signupForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-    closeLoading()
+        .finally(() => { closeLoading() })
 })
 
 async function checkJwt() {
@@ -254,7 +254,7 @@ async function getOrderdata(orderNumber) {
             renderOrder(status, orderNumber)
         }))
         .catch((error) => console.log(error))
-        .finally(closeLoading())
+        .finally(() => { closeLoading() })
 }
 
 

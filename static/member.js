@@ -15,6 +15,9 @@ function closeLoading() {
 
 async function checkJwt() {
     const token = localStorage.getItem("TOKEN");
+    if (!token) {
+        window.location.href = "/";
+    }
     if (token) {
         fetch("/api/user/auth", {
             method: "GET",
@@ -38,8 +41,6 @@ async function checkJwt() {
                 }
             })
             .catch((error) => console.log(error));
-    } else {
-        window.location.href = "/"
     }
 }
 

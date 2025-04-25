@@ -449,7 +449,7 @@ signinForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-        .finally(closeLoading())
+        .finally(() => { closeLoading() })
 
 
 })
@@ -490,7 +490,7 @@ signupForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-        .finally(closeLoading())
+        .finally(() => { closeLoading() })
 
 })
 
