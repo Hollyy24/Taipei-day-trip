@@ -24,28 +24,25 @@ homePage.addEventListener("click", function () {
 
 async function getBooking() {
     const token = localStorage.getItem("TOKEN");
-    try {
-        showLoading()
-        let response = await fetch("/api/booking", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-        });
 
-        if (!response.ok) {
-            throw new Error("API request failed");
+    showLoading()
+    fetch("/api/booking", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
         }
+    })
+        .then((res) => res.json())
+        .then((data) => {
+            console.log("fetcfed")
+            renderBooking(data["data"])
+        })
+        .finally(() => {
+            console.log("finally")
+            closeLoading()
+        })
 
-        let data = await response.json();
-        renderBooking(data["data"])
-
-    } catch (error) {
-        console.log("Error:", error);
-    } finally {
-        closeLoading()
-    }
 }
 
 async function deleteBooking() {
