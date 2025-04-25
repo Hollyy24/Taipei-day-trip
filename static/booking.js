@@ -40,6 +40,9 @@ async function getBooking() {
         })
         .finally(() => {
             console.log("finally")
+            clearTimeout(loadingTimeout);
+            document.getElementById("for-loading").style.display = "none";
+            console.log("end-2")
             closeLoading()
         })
 
