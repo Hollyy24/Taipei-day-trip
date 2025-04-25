@@ -2,20 +2,19 @@
 let loadingTimeout;
 
 function showLoading() {
+    console.log("statr")
     loadingTimeout = setTimeout(() => {
         document.getElementById("for-loading").style.display = "flex";
     }, 500);
 }
 
 function closeLoading() {
+    console.log("end")
     clearTimeout(loadingTimeout);
     document.getElementById("for-loading").style.display = "none";
 }
 
 
-
-checkJwt()
-getBooking()
 
 const homePage = document.querySelector("#nav-left");
 
@@ -40,8 +39,7 @@ async function getBooking() {
         }
 
         let data = await response.json();
-
-        renderBooking(data["data"]);
+        renderBooking(data["data"])
 
     } catch (error) {
         console.log("Error:", error);
@@ -111,6 +109,8 @@ function renderBooking(data) {
 }
 
 
+checkJwt()
+getBooking()
 
 const deleteButton = document.querySelector("#booking-delete-button");
 
@@ -243,7 +243,7 @@ signinForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-        .finally(closeLoading())
+        .finally(() => closeLoading())
 
 
 })
@@ -284,7 +284,7 @@ signupForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-        .finally(closeLoading())
+        .finally(() => closeLoading())
 })
 
 
