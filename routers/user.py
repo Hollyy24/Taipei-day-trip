@@ -29,6 +29,12 @@ class User(BaseModel):
     name: str
     email: str
     password: str
+    
+
+class ReviseData(BaseModel):
+    name:str
+    email:str    
+
 
 class SigninForm(BaseModel):
     email: str
@@ -52,6 +58,32 @@ async def sign_up(user:User):
         return JSONResponse(
             status_code=500,
             content={"error":True,"message":"伺服器內部錯誤"})
+
+
+@user_router.patch("/api/user")
+async def revise_userdata(user:ReviseData,authorization: str = Header(None)):
+    print("here is revise router")
+    print(user)
+    token = authorization.split("Bearer ")[1]
+    user_data = Member.check_user_status(token)
+    result = Member.revise_userdata(user,user_data["id"])
+    if result == False:
+        return JSONResponse(
+            status_code=500,
+            content={"error":True,"message":"伺服器內部錯誤"})
+    return JSONResponse(status_code=200,content={"ok":True})
+
+@user_router.get("/api/user")
+async def get_userdata(authorization: str = Header(None)):
+    print("here is get userdata")
+    token = authorization.split("Bearer ")[1]
+    user_data = Member.check_user_status(token)
+    result = Member.get_userdata(user_data["id"])
+    if result == False:
+        return JSONResponse(
+            status_code=500,
+            content={"error":True,"message":"伺服器內部錯誤"})
+    return JSONResponse(status_code=200,content={"ok":True,"data":result})
 
 
 @user_router.get("/api/user/auth")

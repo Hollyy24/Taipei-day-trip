@@ -1,24 +1,53 @@
 
+let loadingTimeout;
+
+function showLoading() {
+    loadingTimeout = setTimeout(() => {
+        document.getElementById("for-loading").style.display = "flex";
+    }, 500);
+}
+
+function closeLoading() {
+    clearTimeout(loadingTimeout);
+    document.getElementById("for-loading").style.display = "none";
+}
+
+
 
 checkJwt()
 getBooking()
 
-async function getBooking() {
-    const token = localStorage.getItem("TOKEN");
-    fetch("/api/booking", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            renderBooking(data["data"])
-        })
-        .catch((error) => console.log(error))
-}
+const homePage = document.querySelector("#nav-left");
 
+homePage.addEventListener("click", function () {
+    window.location.href = "/";
+})
+
+async function getBooking() {
+    showLoading();
+    const token = localStorage.getItem("TOKEN");
+    try {
+        let response = await fetch("/api/booking", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("API request failed");
+        }
+
+        let data = await response.json();
+        renderBooking(data["data"]);
+
+    } catch (error) {
+        console.log("Error:", error);
+    } finally {
+        closeLoading();
+    }
+}
 
 async function deleteBooking() {
     const token = localStorage.getItem("TOKEN");
@@ -84,6 +113,7 @@ function renderBooking(data) {
 }
 
 
+
 const deleteButton = document.querySelector("#booking-delete-button");
 
 
@@ -117,53 +147,63 @@ const signupEmail = document.querySelector("#signup-form-email");
 const signupPassword = document.querySelector("#signup-form-password");
 const signupMessage = document.querySelector("#signup-message");
 
-const homePage = document.querySelector("#nav-left");
-homePage.addEventListener("click", function () {
-    window.location.href = "/";
-})
 
 function showSignin() {
-    navBg.style.display = "flex";
-    dialogSignup.style.display = "none";
-    dialogSignin.style.display = "flex";
-    signinMessage.style.display = "none";
     signinMessage.textContent = "";
     signinEmail.value = "";
     signinPassword.value = "";
+    signinMessage.style.display = "none";
+    navBg.style.display = "flex";
+    dialogSignup.classList.remove("show")
+    dialogSignup.style.display = "none";
+    dialogSignin.style.display = "flex";
+    dialogSignin.classList.add("show");
+
+
 }
 
 function showSignup() {
-    navBg.style.display = "flex";
-    dialogSignin.style.display = "none";
-    dialogSignup.style.display = "flex";
-    signupMessage.style.display = "none";
+    signupMessage.textContent = "";
     signupname.value = "";
     signupEmail.value = "";
     signupPassword.value = "";
-}
+    signupMessage.style.display = "none";
 
-function closeDialog() {
-    navBg.style.display = "none";
+    navBg.style.display = "flex";
+    dialogSignin.classList.remove("show")
     dialogSignin.style.display = "none";
-    dialogSignup.style.display = "none";
+    dialogSignup.style.display = "flex";
+    dialogSignup.classList.add("show");
+
+}
+
+function closeDialog(item) {
+    item.classList.remove("show");
+    navBg.classList.remove("show");
+
+    setTimeout(() => {
+        item.style.display = "none";
+        navBg.style.display = "none";
+    }, 300);
 }
 
 
-navSignin.addEventListener("click", function (event) {
+
+
+navSignin.addEventListener("click", function () {
     showSignin()
 });
 
-navSignup.addEventListener("click", function (event) {
+navSignup.addEventListener("click", function () {
     showSignup()
 });
 
 closeSignin.addEventListener("click", function () {
-    closeDialog()
+    closeDialog(dialogSignin)
 });
 closeSignup.addEventListener("click", function () {
-    closeDialog()
+    closeDialog(dialogSignup)
 });
-
 
 
 
@@ -174,10 +214,16 @@ signinForm.addEventListener("submit", function (event) {
     const email = document.querySelector("#signin-form-email");
     const password = document.querySelector("#signin-form-password");
     const message = document.querySelector("#signin-message")
+    if (email.value.trim() === "" || password.value.trim() === "") {
+        alert("資料不得為空");
+        return;
+    }
+    message.textContent = "";
     const data = {
         "email": email.value,
         "password": password.value
     }
+    showLoading()
     fetch("/api/user/auth", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -199,6 +245,7 @@ signinForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
+        .finally(closeLoading())
 
 
 })
@@ -209,11 +256,17 @@ signupForm.addEventListener("submit", function (event) {
     const email = document.querySelector("#signup-form-email");
     const password = document.querySelector("#signup-form-password");
     const message = document.querySelector("#signup-message")
+    if (name.value.trim() === "" || email.value.trim() === "" || password.value.trim() === "") {
+        alert("資料不得為空");
+        return;
+    }
+    message.textContent = "";
     const data = {
         "name": name.value,
         "email": email.value,
         "password": password.value
     }
+    showLoading()
     fetch("/api/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -233,9 +286,8 @@ signupForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-
+        .finally(closeLoading())
 })
-
 
 
 
@@ -266,10 +318,6 @@ async function checkJwt() {
     }
 }
 
-function signout() {
-    localStorage.removeItem("TOKEN");
-    window.location.href = "/";
-}
 
 
 const navBook = document.querySelector("#nav-booking");
@@ -301,21 +349,18 @@ async function checkJwt() {
             .then((response) => response.json())
             .then((data) => {
                 if (data["data"]) {
+                    console.log(data['data'])
+                    const userName = document.querySelector("#booking-user-name");
                     const signup = document.querySelector("#nav-signup");
                     const signin = document.querySelector("#nav-signin");
-                    const signout = document.querySelector("#nav-signout");
-                    const username = document.querySelector("#booking-user-name")
-                    username.textContent = data["data"]["name"];
+                    const memberCenter = document.querySelector("#member-center");
+                    userName.textContent = data['data']['name'];
                     signin.style.display = "none";
                     signup.style.display = "none";
-                    signout.style.display = "flex";
+                    memberCenter.style.display = "flex";
                 }
             })
             .catch((error) => console.log(error));
-    } else {
-        window.location.href = "/"
     }
 }
-
-
 

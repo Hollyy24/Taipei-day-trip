@@ -25,7 +25,7 @@ async def request_to_tappay(orderdata:OrderData,authorization: str = Header(None
             status_code=403,
             content={"error":True,"message":"未登入系統，拒絕存取"})
     user_id = user_data.get("id")
-    pay_result  = Order.send_to_tappay(orderdata)
+    pay_result  = Order.send_to_tappay(orderdata,user_id)
     if pay_result == 400:    
         return JSONResponse(
             status_code=400,

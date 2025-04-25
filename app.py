@@ -7,17 +7,22 @@ from routers.attraction import attraction_router
 from routers.user import user_router
 from routers.booking import booking_router
 from routers.order import order_router
+from routers.member import member_router
+
+
 
 
 
 app=FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 
 app.include_router(attraction_router)
 app.include_router(user_router)
 app.include_router(booking_router)
 app.include_router(order_router)
-
+app.include_router(member_router)
 
 # Static Pages (Never Modify Code in this Block)
 @app.get("/", include_in_schema=False)
@@ -33,6 +38,10 @@ async def booking(request: Request):
 async def thankyou(request: Request):
 	return FileResponse("./static/thankyou.html", media_type="text/html")
 
+# # Add member
+@app.get("/member", include_in_schema=False)
+async def member(request: Request):
+	return FileResponse("./static/member.html", media_type="text/html")
         
         
 if __name__ == "__main__":
