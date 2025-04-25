@@ -40,6 +40,7 @@ async function getBooking() {
         }
 
         let data = await response.json();
+        closeLoading();
         renderBooking(data["data"]);
 
     } catch (error) {
@@ -84,8 +85,6 @@ function renderBooking(data) {
         noBooking.style.display = "flex";
         footer.style.position = "relative"
         footer.style.height = "80vh";
-
-
 
     } else {
         const picture = document.querySelector("#booking-content-image");
@@ -289,34 +288,6 @@ signupForm.addEventListener("submit", function (event) {
         .finally(closeLoading())
 })
 
-
-
-async function checkJwt() {
-    console.log("check JWT");
-    const token = localStorage.getItem("TOKEN");
-    if (token) {
-        console.log("have token")
-        fetch("/api/user/auth", {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if (data["data"]) {
-                    console.log(data);
-                    const signup = document.querySelector("#nav-signup");
-                    const signin = document.querySelector("#nav-signin");
-                    const signout = document.querySelector("#nav-signout");
-                    signin.style.display = "none";
-                    signup.style.display = "none";
-                    signout.style.display = "flex";
-                }
-            })
-            .catch((error) => console.log(error));
-    }
-}
 
 
 
