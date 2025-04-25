@@ -72,9 +72,8 @@ navBook.addEventListener("click", function (event) {
     }
 })
 
-checkJwt()
-fetchOrderData()
-loadUserdata()
+
+
 
 async function fetchOrderData() {
     const token = localStorage.getItem("TOKEN");
@@ -332,8 +331,9 @@ async function getUserImage() {
     })
         .then(res => res.json())
         .then(data => {
-            console.log(data["data"][2]);
-            document.querySelector("#member-picture").style.backgroundImage = `url(${data["data"][2]})`
+            if (data["data"]) {
+                document.querySelector("#member-picture").style.backgroundImage = `url(${data["data"][2]})`
+            }
         })
         .catch(err => {
             console.error(err);
@@ -341,4 +341,7 @@ async function getUserImage() {
 
 }
 
+checkJwt()
+fetchOrderData()
+loadUserdata()
 getUserImage()

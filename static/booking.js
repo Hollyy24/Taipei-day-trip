@@ -15,7 +15,6 @@ function closeLoading() {
 }
 
 
-
 const homePage = document.querySelector("#nav-left");
 
 homePage.addEventListener("click", function () {
