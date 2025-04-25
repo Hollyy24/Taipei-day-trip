@@ -26,7 +26,7 @@ homePage.addEventListener("click", function () {
 async function getBooking() {
     const token = localStorage.getItem("TOKEN");
     try {
-        showLoading();
+        showLoading()
         let response = await fetch("/api/booking", {
             method: "GET",
             headers: {
@@ -40,13 +40,13 @@ async function getBooking() {
         }
 
         let data = await response.json();
-        closeLoading();
+
         renderBooking(data["data"]);
 
     } catch (error) {
         console.log("Error:", error);
     } finally {
-        closeLoading();
+        closeLoading()
     }
 }
 
@@ -319,7 +319,6 @@ async function checkJwt() {
             .then((response) => response.json())
             .then((data) => {
                 if (data["data"]) {
-                    console.log(data['data'])
                     const userName = document.querySelector("#booking-user-name");
                     const signup = document.querySelector("#nav-signup");
                     const signin = document.querySelector("#nav-signin");
