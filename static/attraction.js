@@ -1,12 +1,35 @@
+
+let loadingTimeout;
+
+function showLoading() {
+    console.log("start")
+    loadingTimeout = setTimeout(() => {
+        document.getElementById("for-loading").style.display = "flex";
+    }, 500);
+}
+
+function closeLoading() {
+    console.log("end")
+    clearTimeout(loadingTimeout);
+    document.getElementById("for-loading").style.display = "none";
+}
+
+
+
 async function getAttrctionData(attractionId) {
     try {
+        showLoading()
         let response = await fetch(`/api/attraction/${attractionId}`);
         let data = await response.json();
         console.log(data)
         renderAttrction(data["data"]);
+
     }
     catch (error) {
         console.error("Error", error);
+    }
+    finally {
+        closeLoading()
     }
 }
 
@@ -39,7 +62,7 @@ function imagesLoading(imagesUrl) {
         dotList.appendChild(dot);
 
     }
-
+    imageList.firstChild.classList.add("show");
 }
 
 
@@ -54,6 +77,7 @@ const homePage = document.querySelector("#nav-left");
 
 checkJwt()
 getAttrctionData(id)
+
 
 
 homePage.addEventListener("click", function () {
@@ -108,9 +132,9 @@ function showImage(imageIndex) {
     }
     images.forEach((img) => {
         if (img.id === `image-${index}`) {
-            img.style.display = "block"
+            img.classList.add("show")
         } else {
-            img.style.display = "none"
+            img.classList.remove("show")
         }
     });
 
@@ -159,30 +183,63 @@ const signupMessage = document.querySelector("#signup-message");
 
 
 function showSignin() {
-    navBg.style.display = "flex";
-    dialogSignup.style.display = "none";
-    dialogSignin.style.display = "flex";
-    signinMessage.style.display = "none";
     signinMessage.textContent = "";
     signinEmail.value = "";
     signinPassword.value = "";
+    signinMessage.style.display = "none";
+    navBg.style.display = "flex";
+    dialogSignup.classList.remove("show")
+    dialogSignup.style.display = "none";
+    dialogSignin.style.display = "flex";
+    dialogSignin.classList.add("show");
+
+
 }
 
 function showSignup() {
-    navBg.style.display = "flex";
-    dialogSignin.style.display = "none";
-    dialogSignup.style.display = "flex";
-    signupMessage.style.display = "none";
+    signupMessage.textContent = "";
     signupname.value = "";
     signupEmail.value = "";
     signupPassword.value = "";
+    signupMessage.style.display = "none";
+
+    navBg.style.display = "flex";
+    dialogSignin.classList.remove("show")
+    dialogSignin.style.display = "none";
+    dialogSignup.style.display = "flex";
+    dialogSignup.classList.add("show");
+
 }
 
-function closeDialog() {
-    navBg.style.display = "none";
-    dialogSignin.style.display = "none";
-    dialogSignup.style.display = "none";
+function closeDialog(item) {
+    item.classList.remove("show");
+    navBg.classList.remove("show");
+
+    setTimeout(() => {
+        item.style.display = "none";
+        navBg.style.display = "none";
+    }, 300);
 }
+
+
+
+
+navSignin.addEventListener("click", function () {
+    showSignin()
+});
+
+navSignup.addEventListener("click", function () {
+    showSignup()
+});
+
+closeSignin.addEventListener("click", function () {
+    closeDialog(dialogSignin)
+});
+closeSignup.addEventListener("click", function () {
+    closeDialog(dialogSignup)
+});
+
+
 
 
 navSignin.addEventListener("click", function (event) {
@@ -210,10 +267,16 @@ signinForm.addEventListener("submit", function (event) {
     const email = document.querySelector("#signin-form-email");
     const password = document.querySelector("#signin-form-password");
     const message = document.querySelector("#signin-message")
+    if (email.value.trim() === "" || password.value.trim() === "") {
+        alert("資料不得為空");
+        return;
+    }
+    message.textContent = "";
     const data = {
         "email": email.value,
         "password": password.value
     }
+    showLoading()
     fetch("/api/user/auth", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -235,21 +298,27 @@ signinForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
+        .finally(() => { closeLoading() })
 
 
 })
-
 signupForm.addEventListener("submit", function (event) {
     event.preventDefault()
     const name = document.querySelector("#signup-form-name");
     const email = document.querySelector("#signup-form-email");
     const password = document.querySelector("#signup-form-password");
     const message = document.querySelector("#signup-message")
+    if (name.value.trim() === "" || email.value.trim() === "" || password.value.trim() === "") {
+        alert("資料不得為空");
+        return;
+    }
+    message.textContent = "";
     const data = {
         "name": name.value,
         "email": email.value,
         "password": password.value
     }
+    showLoading()
     fetch("/api/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -269,13 +338,13 @@ signupForm.addEventListener("submit", function (event) {
             }
         })
         .catch((error) => console.error("Error:", error))
-
+        .finally(closeLoading())
 })
 
 
 
-
 async function checkJwt() {
+    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
     if (token) {
         fetch("/api/user/auth", {
@@ -289,15 +358,16 @@ async function checkJwt() {
                 if (data["data"]) {
                     const signup = document.querySelector("#nav-signup");
                     const signin = document.querySelector("#nav-signin");
-                    const signout = document.querySelector("#nav-signout");
+                    const memberCenter = document.querySelector("#member-center");
                     signin.style.display = "none";
                     signup.style.display = "none";
-                    signout.style.display = "flex";
+                    memberCenter.style.display = "flex";
                 }
             })
             .catch((error) => console.log(error));
     }
 }
+
 
 function signout() {
     localStorage.removeItem("TOKEN");

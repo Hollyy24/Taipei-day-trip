@@ -1,0 +1,51 @@
+@media screen and (min-width:961px) {
+
+
+
+    #order-result {
+        margin: 50px auto;
+        color: #666666;
+        font-weight: 400;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    #order-number {
+        margin: 30px auot;
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    #order-detail {
+        margin: 10px auto;
+        font-size: 15px;
+        font-weight: 100;
+    }
+}
+
+
+
+@media screen and (max-width:960px)and (min-width:481px) {
+
+
+    #order-result {
+        margin: 50px auto;
+        color: #666666;
+        font-weight: 400;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    #order-number {
+        margin: 30px auot;
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    #order-detail {
+        margin: 10px auto;
+        font-size: 15px;
+        font-weight: 100;
+    }
+
+}
