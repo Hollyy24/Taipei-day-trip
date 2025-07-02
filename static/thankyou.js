@@ -194,7 +194,6 @@ signupForm.addEventListener("submit", function (event) {
 })
 
 async function checkJwt() {
-    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
     if (token) {
         fetch("/api/user/auth", {

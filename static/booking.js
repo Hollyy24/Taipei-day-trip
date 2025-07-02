@@ -2,14 +2,12 @@
 let loadingTimeout;
 
 function showLoading() {
-    console.log("statr")
     loadingTimeout = setTimeout(() => {
         document.getElementById("for-loading").style.display = "flex";
     }, 500);
 }
 
 function closeLoading() {
-    console.log("end")
     clearTimeout(loadingTimeout);
     document.getElementById("for-loading").style.display = "none";
 }
@@ -34,14 +32,11 @@ async function getBooking() {
     })
         .then((res) => res.json())
         .then((data) => {
-            console.log("fetcfed")
             renderBooking(data["data"])
         })
         .finally(() => {
-            console.log("finally")
             clearTimeout(loadingTimeout);
             document.getElementById("for-loading").style.display = "none";
-            console.log("end-2")
             closeLoading()
         })
 
@@ -147,8 +142,8 @@ const signupMessage = document.querySelector("#signup-message");
 
 function showSignin() {
     signinMessage.textContent = "";
-    signinEmail.value = "";
-    signinPassword.value = "";
+    signinEmail.value = "test@test";
+    signinPassword.value = "test";
     signinMessage.style.display = "none";
     navBg.style.display = "flex";
     dialogSignup.classList.remove("show")
@@ -306,7 +301,6 @@ navBook.addEventListener("click", function (event) {
 
 
 async function checkJwt() {
-    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
     if (!token) {
         window.location.href = "/";

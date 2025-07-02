@@ -278,7 +278,6 @@ uploadsCancle.addEventListener("click", function () {
 
 uploadsPicture.addEventListener("change", function () {
     const file = uploadsPicture.files[0];
-    console.log(file)
     if (file) {
         const imageURL = URL.createObjectURL(file);
         uploadsPreview.src = imageURL;
@@ -296,7 +295,6 @@ uploadsButton.addEventListener("click", function () {
     }
 
     const formData = new FormData();
-    console.log(file)
     formData.append("photo", file);
     const token = localStorage.getItem("TOKEN");
 
@@ -310,9 +308,8 @@ uploadsButton.addEventListener("click", function () {
         .then(res => res.json())
         .then(data => {
             alert("圖片上傳成功！");
-            console.log(data["path"]);
             document.querySelector("#uploads-container").style.display = "none";
-            document.querySelector("#member-picture").style.backgroundImage = `url(${data["path"]})`
+            document.querySelector("#member-picture").style.backgroundImage = `url('${data["path"]}')`
 
         })
         .catch(err => {
@@ -333,7 +330,8 @@ async function getUserImage() {
         .then(res => res.json())
         .then(data => {
             if (data["data"]) {
-                document.querySelector("#member-picture").style.backgroundImage = `url(${data["data"][2]})`
+                let path = data["data"][1]
+                document.querySelector("#member-picture").style.backgroundImage = `url('${path}')`;
             }
         })
         .catch(err => {
