@@ -67,7 +67,6 @@ async function loadsAttractionsByMrt(pageNumber, keywordString) {
         let data = await response.json();
         let attractions = data["data"];
         let attractionList = document.querySelector("#attractions-list")
-        console.log(attractions);
         if (attractions.length !== 0) {
             page = data["nextPage"];
             for (let attraction of attractions) {
@@ -111,7 +110,6 @@ async function loasdMrts() {
 
 
 function clearAttraction() {
-    console.log("clear attractions")
     let attractionList = document.querySelector("#attractions-list");
     while (attractionList.firstChild) {
         attractionList.removeChild(attractionList.firstChild);
@@ -245,8 +243,6 @@ mrtsList.addEventListener("click", function (event) {
         keyword = event.target.textContent;
         page = 0;
         searchWay = "mrt";
-        console.log("mrts")
-        console.log(keyword, page);
         clearAttraction();
         loadsAttractionsByMrt(page, keyword);
     }
@@ -354,8 +350,8 @@ const signupMessage = document.querySelector("#signup-message");
 
 function showSignin() {
     signinMessage.textContent = "";
-    signinEmail.value = "";
-    signinPassword.value = "";
+    signinEmail.value = "test@test";
+    signinPassword.value = "test";
     signinMessage.style.display = "none";
     navBg.style.display = "flex";
     dialogSignup.classList.remove("show")
@@ -496,7 +492,6 @@ signupForm.addEventListener("submit", function (event) {
 
 
 async function checkJwt() {
-    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
     if (token) {
         fetch("/api/user/auth", {

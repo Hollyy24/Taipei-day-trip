@@ -2,14 +2,12 @@
 let loadingTimeout;
 
 function showLoading() {
-    console.log("start")
     loadingTimeout = setTimeout(() => {
         document.getElementById("for-loading").style.display = "flex";
     }, 500);
 }
 
 function closeLoading() {
-    console.log("end")
     clearTimeout(loadingTimeout);
     document.getElementById("for-loading").style.display = "none";
 }
@@ -21,7 +19,6 @@ async function getAttrctionData(attractionId) {
         showLoading()
         let response = await fetch(`/api/attraction/${attractionId}`);
         let data = await response.json();
-        console.log(data)
         renderAttrction(data["data"]);
 
     }
@@ -184,8 +181,8 @@ const signupMessage = document.querySelector("#signup-message");
 
 function showSignin() {
     signinMessage.textContent = "";
-    signinEmail.value = "";
-    signinPassword.value = "";
+    signinEmail.value = "test@test";
+    signinPassword.value = "test";
     signinMessage.style.display = "none";
     navBg.style.display = "flex";
     dialogSignup.classList.remove("show")
@@ -344,8 +341,8 @@ signupForm.addEventListener("submit", function (event) {
 
 
 async function checkJwt() {
-    console.log("check JWT");
     const token = localStorage.getItem("TOKEN");
+    if (!token) { return }
     if (token) {
         fetch("/api/user/auth", {
             method: "GET",
@@ -355,6 +352,9 @@ async function checkJwt() {
         })
             .then((response) => response.json())
             .then((data) => {
+                if (data["message"]) {
+                    localStorage.removeItem("TOKEN")
+                }
                 if (data["data"]) {
                     const signup = document.querySelector("#nav-signup");
                     const signin = document.querySelector("#nav-signin");

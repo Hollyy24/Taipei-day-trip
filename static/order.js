@@ -1,6 +1,5 @@
 
 function showLoading() {
-    console.log("start")
     loadingTimeout = setTimeout(() => {
         console.log("open loading effect")
         document.getElementById("for-loading").style.display = "flex";
@@ -8,7 +7,6 @@ function showLoading() {
 }
 
 function closeLoading() {
-    console.log("end")
     clearTimeout(loadingTimeout);
     document.getElementById("for-loading").style.display = "none";
 }
@@ -19,6 +17,12 @@ const orderName = document.querySelector("#order-name");
 const orderEmail = document.querySelector("#order-email");
 const orderPhone = document.querySelector("#order-phone");
 const allSection = document.querySelectorAll("section");
+
+
+orderName.value = "test"
+orderEmail.value = "test@email"
+orderPhone.value = "012345678"
+
 
 
 function checkEmpty(inputElement) {
@@ -32,6 +36,7 @@ function checkEmpty(inputElement) {
 }
 
 
+
 if (allSection.length != 0) {
     checkEmpty(orderName);
     checkEmpty(orderEmail);
@@ -42,15 +47,15 @@ if (allSection.length != 0) {
         fields: {
             number: {
                 element: '#card-number',
-                placeholder: '**** **** **** ****'
+                placeholder: '複製右側數字'
             },
             expirationDate: {
                 element: '#card-expiration-date',
-                placeholder: 'MM / YY'
+                placeholder: '複製右側數字'
             },
             ccv: {
                 element: '#card-ccv',
-                placeholder: 'CCV'
+                placeholder: '複製右側數字'
             }
         },
         styles: {
@@ -87,6 +92,10 @@ if (allSection.length != 0) {
     const checkExp = document.querySelector("#check-for-exp");
     const checkCcv = document.querySelector("#check-for-ccv");
 
+    checkNumber.textContent = "4242 4242 4242 4242"
+    checkExp.textContent = "44/44"
+    checkCcv.textContent = "444"
+
     TPDirect.card.onUpdate(function (update) {
         // update.canGetPrime === true
         // --> you can call TPDirect.card.getPrime()
@@ -107,7 +116,7 @@ if (allSection.length != 0) {
         if (update.status.number === 2) {
             orderButton.style.pointerEvents = 'none'
             orderButton.style.opacity = '0.5';
-            checkNumber.textContent = "格式輸入錯誤"
+            // checkNumber.textContent = "格式輸入錯誤"
         } else if (update.status.number === 0) {
             checkNumber.textContent = "正確"
         }
@@ -115,7 +124,7 @@ if (allSection.length != 0) {
         if (update.status.expiry === 2) {
             orderButton.style.pointerEvents = 'none'
             orderButton.style.opacity = '0.5';
-            checkExp.textContent = "格式輸入錯誤"
+            // checkExp.textContent = "格式輸入錯誤"
         } else if (update.status.expiry === 0) {
             checkExp.textContent = "正確"
         }
@@ -123,7 +132,7 @@ if (allSection.length != 0) {
         if (update.status.ccv === 2) {
             orderButton.style.pointerEvents = 'none'
             orderButton.style.opacity = '0.5';
-            checkCcv.textContent = "格式輸入錯誤"
+            // checkCcv.textContent = "格式輸入錯誤"
         } else if (update.status.ccv === 0) {
             checkCcv.textContent = "正確"
         }
@@ -157,7 +166,6 @@ if (allSection.length != 0) {
             };
             showLoading()
             let token = localStorage.getItem("TOKEN");
-            console.log("sent to  tappay")
             fetch("/api/users", {
                 method: "POST",
                 headers: {
@@ -174,14 +182,11 @@ if (allSection.length != 0) {
                         window.location.href = `/thankyou?number=${orderNumber}`
                     }
                     if (result.error) {
-                        console.log(result.message)
                         alert("行程預定失敗")
-                        console.log("booking error")
                     }
                 })
                 .catch((err) => {
                     console.error(err);
-                    console.log("booking error2")
                     alert("預定失敗，請重新預定")
                 })
                 .finally(() => {
