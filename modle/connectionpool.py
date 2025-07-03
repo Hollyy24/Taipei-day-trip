@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 dbconfig = {
-    "host": "localhost",
+    "host": os.getenv("DB_HOST"),
     "user": os.getenv("DATA_USER"),
     "password":os.getenv("MY_PASSWORD"),
     "database":"travelSpots"
